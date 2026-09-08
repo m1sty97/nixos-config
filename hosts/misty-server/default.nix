@@ -26,13 +26,10 @@ in
   ];
 
   # ---------------------------------------------------------------------------
-  # 网络 — 服务器使用 NetworkManager（便于在虚拟化环境中自动获取 IP）
+  # 网络 — 服务器使用 NetworkManager（与 base 默认一致，便于虚拟化环境中自动获取 IP）
+  # base/networking.nix 已默认启用 NetworkManager + DHCP，此处仅设置主机名
   # ---------------------------------------------------------------------------
-  networking = {
-    inherit hostName;
-    networkmanager.enable = true;
-    useDHCP = true;
-  };
+  networking.hostName = hostName;
 
   # ---------------------------------------------------------------------------
   # 系统状态版本
