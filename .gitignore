@@ -1,0 +1,16 @@
+# 忽略 flake.lock（可选择是否提交）
+# flake.lock
+
+# 忽略结果符号链接
+result
+result-*
+
+# 忽略编辑器临时文件
+*~
+.*.swp
+.*.swo
+\#*\#
+.\#*
+
+# 忽略 hardware-configuration 的备份
+hardware-configuration.nix.bak

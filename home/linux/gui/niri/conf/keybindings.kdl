@@ -1,0 +1,121 @@
+// =============================================================================
+// niri/conf/keybindings.kdl — Niri 快捷键配置
+// -----------------------------------------------------------------------------
+// Mod 键默认为 Super（Windows 键）
+// 文档：https://yalter.github.io/niri/Configuration:-Key-Binds
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// 应用启动
+// -----------------------------------------------------------------------------
+Mod+T { spawn "ghostty"; }                          // 终端
+Mod+W { spawn "firefox"; }                        // 浏览器
+Mod+E { spawn "thunar"; }                         // 文件管理器
+Mod+D { spawn "fuzzel"; }                         // 应用启动器（需要安装 fuzzel）
+
+// -----------------------------------------------------------------------------
+// 窗口管理
+// -----------------------------------------------------------------------------
+Mod+Q { close-window; }                           // 关闭窗口
+Mod+F { maximize-column; }                        // 最大化列
+Mod+Shift+F { fullscreen-window; }               // 全屏窗口
+Mod+C { center-column; }                          // 居中列
+
+// 窗口焦点移动
+Mod+Left  { focus-column-left; }
+Mod+Right { focus-column-right; }
+Mod+Up    { focus-window-up; }
+Mod+Down  { focus-window-down; }
+
+// 窗口位置移动
+Mod+Shift+Left  { move-column-left; }
+Mod+Shift+Right { move-column-right; }
+Mod+Shift+Up    { move-window-up; }
+Mod+Shift+Down  { move-window-down; }
+
+// 窗口尺寸调整
+Mod+Minus { consume-or-expire-window-left; }      // 向左合并/释放窗口
+Mod+Equal { consume-or-expire-window-right; }     // 向右合并/释放窗口
+
+// 列宽预设切换
+Mod+R { switch-preset-column-width; }
+Mod+Shift+R { switch-preset-window-height; }
+
+// -----------------------------------------------------------------------------
+// 工作区
+// -----------------------------------------------------------------------------
+Mod+1 { focus-workspace 1; }
+Mod+2 { focus-workspace 2; }
+Mod+3 { focus-workspace 3; }
+Mod+4 { focus-workspace 4; }
+Mod+5 { focus-workspace 5; }
+Mod+6 { focus-workspace 6; }
+Mod+7 { focus-workspace 7; }
+Mod+8 { focus-workspace 8; }
+Mod+9 { focus-workspace 9; }
+Mod+0 { focus-workspace 10; }
+
+// 移动窗口到工作区
+Mod+Shift+1 { move-column-to-workspace 1; }
+Mod+Shift+2 { move-column-to-workspace 2; }
+Mod+Shift+3 { move-column-to-workspace 3; }
+Mod+Shift+4 { move-column-to-workspace 4; }
+Mod+Shift+5 { move-column-to-workspace 5; }
+Mod+Shift+6 { move-column-to-workspace 6; }
+Mod+Shift+7 { move-column-to-workspace 7; }
+Mod+Shift+8 { move-column-to-workspace 8; }
+Mod+Shift+9 { move-column-to-workspace 9; }
+Mod+Shift+0 { move-column-to-workspace 10; }
+
+// 工作区导航
+Mod+WheelScrollDown { focus-workspace-down; }
+Mod+WheelScrollUp   { focus-workspace-up; }
+Mod+Page_Down       { focus-workspace-down; }
+Mod+Page_Up         { focus-workspace-up; }
+
+// -----------------------------------------------------------------------------
+// 特殊工作区
+// -----------------------------------------------------------------------------
+Mod+S { toggle-special-workspace "scratchpad"; }  // 切换临时工作区
+
+// -----------------------------------------------------------------------------
+// 会话管理
+// -----------------------------------------------------------------------------
+Mod+L { spawn "swaylock"; }                       // 锁屏
+Mod+Shift+E { spawn "wlogout"; }                  // 注销/电源菜单
+Mod+Shift+P { power-off-monitors; }              // 关闭显示器
+
+// -----------------------------------------------------------------------------
+// 截图
+// -----------------------------------------------------------------------------
+Print { screenshot; }                             // 截屏
+Mod+Print { screenshot-screen; }                  // 截取当前屏幕
+Shift+Print { screenshot-window; }               // 截取当前窗口
+
+// -----------------------------------------------------------------------------
+// 输入法
+// -----------------------------------------------------------------------------
+Mod+Space { spawn "fcitx5-remote -t"; }          // 切换输入法（需要 fcitx5）
+
+// -----------------------------------------------------------------------------
+// 音量控制（需要 playerctl 和 pactl）
+// -----------------------------------------------------------------------------
+Mod+Shift+M { spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle"; }  // 静音切换
+// XF86AudioMute { spawn "pactl set-sink-mute @DEFAULT_SINK@ toggle"; }
+// XF86AudioRaiseVolume { spawn "pactl set-sink-volume @DEFAULT_SINK@ +5%"; }
+// XF86AudioLowerVolume { spawn "pactl set-sink-volume @DEFAULT_SINK@ -5%"; }
+
+// -----------------------------------------------------------------------------
+// 媒体控制
+// -----------------------------------------------------------------------------
+Mod+P { spawn "playerctl play-pause"; }          // 播放/暂停
+// XF86AudioPlay { spawn "playerctl play-pause"; }
+// XF86AudioNext { spawn "playerctl next"; }
+// XF86AudioPrev { spawn "playerctl previous"; }
+
+// -----------------------------------------------------------------------------
+// Noctalia Shell 控制
+// -----------------------------------------------------------------------------
+// Noctalia 通过 IPC 命令控制，使用 noctalia msg
+// 查看 IPC 命令列表：noctalia msg --help
+Mod+Shift+R { spawn "noctalia" "msg" "restart"; }  // 重启 Noctalia Shell

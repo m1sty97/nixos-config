@@ -1,0 +1,21 @@
+// =============================================================================
+// niri/conf/spawn-at-startup.kdl — Niri 启动时执行的程序
+// -----------------------------------------------------------------------------
+// 这些程序在 Niri 会话启动时自动运行。
+// =============================================================================
+
+// 启动 Noctalia 桌面 Shell（状态栏、启动器、通知、锁屏、壁纸、OSD）
+// Noctalia 原生支持 Niri 的工作区集成
+spawn-at-startup "noctalia"
+
+// 启动 XWayland Satellite（X11 应用兼容层）
+spawn-at-startup "xwayland-satellite"
+
+// 设置壁纸（取消注释并指定路径）
+// spawn-at-startup "swaybg" "-i" "~/Pictures/Wallpapers/wallpaper.png" "-m" "fill"
+
+// 启动输入法（需要安装 fcitx5）
+spawn-at-startup "fcitx5" "-d" "--replace"
+
+// 启动 NetworkManager applet（网络托盘图标）
+// spawn-at-startup "nm-applet" "--indicator"
