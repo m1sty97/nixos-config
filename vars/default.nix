@@ -14,10 +14,15 @@
   useremail = "misty@example.com";
 
   # ---------------------------------------------------------------------------
-  # 初始登录密码的哈希值
+  # 初始登录密码的哈希值（回退方案 — 优先使用 sops 管理）
   # 生成方式：mkpasswd -m yescrypt --rounds 11
-  # 首次安装后请立即用 passwd 命令修改密码！
-  # 下面是一个示例占位符哈希（密码为 "changeme"），请务必替换！
+  #
+  # ⚠️ 此哈希仅作为 sops 未配置时的回退占位符。
+  # 生产环境应通过 sops-nix 管理密码哈希（见 secrets/secrets.yaml 和 modules/nixos/base/sops.nix）。
+  # 首次使用请：
+  #   1. 生成 age 密钥对并配置 .sops.yaml
+  #   2. 运行 `sops secrets/secrets.yaml` 填入真实密码哈希
+  #   3. 替换下方占位符或直接删除（sops 启用后不需要）
   # ---------------------------------------------------------------------------
   initialHashedPassword = "$y$j9T$placeholderreplacewithyourownhash";
 

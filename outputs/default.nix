@@ -134,6 +134,10 @@ in
       deadnix
       # Nix linter
       statix
+      # sops 密钥管理工具
+      sops
+      # age 加密工具（sops 的默认加密后端）
+      age
     ];
     name = "nixos-config-dev";
   };

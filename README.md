@@ -222,9 +222,11 @@ nix develop                         # 进入开发环境
 ## ⚠️ 注意事项
 
 1. **首次使用前必须修改**：
-   - `vars/default.nix` 中的密码哈希、SSH 公钥、邮箱
-   - `vars/networking.nix` 中的网络配置
+   - `vars/default.nix` 中的邮箱、网络配置
    - `hosts/*/hardware-configuration.nix`（用 `nixos-generate-config` 生成）
+   - **密钥管理**（二选一）：
+     - 方式一（推荐）：配置 sops-nix 管理密码和 SSH 公钥 → 见 [secrets/README.md](./secrets/README.md)
+     - 方式二（快速试用）：直接修改 `vars/default.nix` 中的 `initialHashedPassword` 和 `mainSshAuthorizedKeys`
 
 2. **Hyprland 分支需要 dots-hyprland**：
    - 克隆 dots-hyprland 到 `~/dots-hyprland`

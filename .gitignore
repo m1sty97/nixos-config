@@ -14,3 +14,19 @@ result-*
 
 # 忽略 hardware-configuration 的备份
 hardware-configuration.nix.bak
+
+# =============================================================================
+# sops 密钥安全 — 确保明文密钥文件永远不会被提交
+# =============================================================================
+
+# age 私钥（绝对不能提交！）
+age/keys.txt
+*.age
+
+# sops 解密后的明文文件（sops -d 输出）
+secrets/*.decrypted.*
+secrets/*-plaintext.*
+
+# sops 备份文件
+secrets/*.bak
+secrets/*.old

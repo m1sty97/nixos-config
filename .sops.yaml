@@ -1,0 +1,32 @@
+# =============================================================================
+# .sops.yaml — sops 加密配置
+# -----------------------------------------------------------------------------
+# 定义加密规则和密钥。sops 根据此文件决定哪些 YAML key 需要加密、
+# 用哪些 age/GPG 公钥加密。
+#
+# 🔑 密钥生成（age）：
+#   nix shell nixpkgs#age --command age-keygen -o ~/.config/sops/age/keys.txt
+#   # 然后将生成的公钥（以 age1... 开头）填入下方 creation_rules
+#
+# 📝 加密密钥文件：
+#   nix shell nixpkgs#sops --command sops secrets/secrets.yaml
+#   # 这会打开编辑器，输入明文内容，保存后自动加密
+#
+# 🔓 解密验证：
+#   nix shell nixpkgs#sops --command sops -d secrets/secrets.yaml
+#
+# ⚠️ 首次使用前：
+#   1. 生成 age 密钥对（见上方命令）
+#   2. 将公钥填入下方 creation_rules 的 age 列表
+#   3. 运行 `sops secrets/secrets.yaml` 编辑密钥内容
+#   4. 确保各主机的 age 私钥部署到 /var/lib/sops-nix/age/keys.txt
+# =============================================================================
+
+# 创建规则 — 所有 YAML 文件使用相同的 age 公钥加密
+creation_rules:
+  - path_regex: secrets/.*\.yaml$
+    # 🔑 在此填入你的 age 公钥（以 age1... 开头）
+    # 生成方式：age-keygen -o ~/.config/sops/age/keys.txt
+    # 输出的公钥行格式：# public key: age1xxx...
+    age:
+      - "age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

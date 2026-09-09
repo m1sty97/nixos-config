@@ -64,6 +64,13 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # sops-nix — 声明式密钥管理（通过 sops 加密 YAML 文件管理密码、密钥等）
+    # 密钥以加密形式存储在仓库中，构建时通过 age/GPG 解密
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   # ---------------------------------------------------------------------------

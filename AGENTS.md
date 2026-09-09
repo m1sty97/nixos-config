@@ -104,11 +104,18 @@
 
 ### 2.6 敏感信息处理
 
-- **禁止提交密码明文、SSH 私钥、API token**。
-  `vars/default.nix` 中的 `initialHashedPassword` 是占位符，用户需自行替换。
+- **所有敏感信息通过 sops-nix 管理**（密码哈希、SSH 私钥、API token 等）。
+  加密文件在 `secrets/secrets.yaml`，配置在 `.sops.yaml`，系统模块在 `modules/nixos/base/sops.nix`。
+  参见 [secrets/README.md](./secrets/README.md)。
+- **age 私钥（`keys.txt`）绝对不能提交到 git**（已在 `.gitignore` 中排除）。
+  私钥部署到各主机的 `/var/lib/sops-nix/age/keys.txt`。
+- **明文密码、密码哈希明文不在代码中出现**。`vars/default.nix` 中的
+  `initialHashedPassword` 仅作为 sops 未配置时的回退占位符，生产环境应使用 sops。
+- 新增敏感配置时，通过 `sops secrets/secrets.yaml` 添加 key，然后在
+  `modules/nixos/base/sops.nix` 的 `sops.secrets` 中注册，在需要使用的模块中通过
+  `config.sops.secrets."key/path".path` 引用解密后的文件路径。
 - `hosts/*/hardware-configuration.nix` 包含硬件特定信息，已加入版本控制（占位文件），
   用户首次安装后替换为实际配置。
-- 如未来引入 secrets 管理（如 agenix），secret 文件不得提交到本仓库。
 
 ---
 
@@ -147,7 +154,9 @@
 - [ ] `git status --short` 显示干净的暂存区（只有预期文件）。
 - [ ] Commit message 符合 §2.5 规范（中文描述 + 英文前缀）。
 - [ ] 一个提交只做一件事，没有混合不相关的改动。
-- [ ] `.gitignore` 正确排除 `result`、`result-*`、临时文件。
+- [ ] `.gitignore` 正确排除 `result`、`result-*`、临时文件、age 私钥、sops 明文文件。
+- [ ] 如果修改了 `secrets/secrets.yaml`，确认文件已被 sops 加密（文件顶部有 `sops:` metadata），
+      没有意外提交明文内容。
 
 ### 3.5 文档同步
 
@@ -162,12 +171,16 @@
 
 ```
 nixos-config/
-├── flake.nix              # 入口：定义 inputs
+├── flake.nix              # 入口：定义 inputs（含 sops-nix）
+├── .sops.yaml             # sops 加密配置（age 公钥）
 ├── outputs/default.nix    # 组装 nixosConfigurations（3 台主机）
 ├── lib/                   # mylib：scanPaths / nixosSystem
-├── vars/                  # myvars：用户名 / 网络 / SSH
+├── vars/                  # myvars：用户名 / 网络 / SSH（非敏感）
+├── secrets/               # sops 加密密钥文件
+│   ├── secrets.yaml       #   加密的密码哈希、SSH 公钥等
+│   └── README.md          #   密钥管理使用指南
 ├── modules/nixos/         # 系统级模块
-│   ├── base/              #   所有主机共享
+│   ├── base/              #   所有主机共享（含 sops.nix）
 │   ├── desktop/           #   桌面专属
 │   ├── server/            #   服务器专属
 │   ├── desktop.nix        #   桌面入口
