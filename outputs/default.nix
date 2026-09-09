@@ -76,7 +76,7 @@ in
 
     # =========================================================================
     # 桌面主机 — misty-hyprland（Hyprland 分支）
-    # Hyprland + dots-hyprland (illogical-impulse) 桌面
+    # Hyprland + Noctalia Shell 桌面
     # 部署命令：sudo nixos-rebuild switch --flake .#misty-hyprland
     # =========================================================================
     misty-hyprland = mylib.nixosSystem {
