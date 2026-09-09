@@ -1,10 +1,8 @@
 # =============================================================================
 # hosts/misty-hyprland/default.nix — Hyprland 桌面主机配置
 # -----------------------------------------------------------------------------
-# 使用 Hyprland + dots-hyprland (illogical-impulse) 的桌面主机。
-#
-# 使用前需要将 dots-hyprland 仓库克隆到 ~/dots-hyprland：
-#   git clone <dots-hyprland 仓库地址> ~/dots-hyprland
+# 使用 Hyprland + Noctalia Shell 的桌面主机。
+# 桌面 Shell 与 Niri 分支统一使用 Noctalia，便于统一管理。
 #
 # 硬件相关配置（hardware-configuration.nix）需要根据实际硬件生成：
 #   sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix

@@ -1,7 +1,7 @@
 # AGENTS.md — 项目 Agent 工作指南
 
 本仓库是个人 NixOS 配置（Flakes + home-manager），管理三台主机：
-`misty-desktop`（Niri + Noctalia）、`misty-hyprland`（Hyprland + dots-hyprland）、
+`misty-desktop`（Niri + Noctalia）、`misty-hyprland`（Hyprland + Noctalia）、
 `misty-server`（虚拟化环境中的服务器）。所有 Agent 在本仓库中工作前，**必须**阅读并遵守本文档。
 
 ---
@@ -80,11 +80,10 @@
 
 ### 2.4 配置文件链接方式
 
-- Niri 的 KDL 配置、Hyprland 的 Lua 配置通过 `xdg.configFile` + `mkOutOfStoreSymlink`
-  链接到 `~/.config/`，使配置修改无需重新部署即可生效。
-- 链接源路径基于 `config.home.homeDirectory`（如 `~/nixos-config/home/linux/gui/niri/conf`），
-  不要硬编码绝对路径。
-- dots-hyprland 的配置链接到 `~/dots-hyprland/dots/.config/`，需用户单独克隆该仓库。
+- Niri 的 KDL 配置通过 `xdg.configFile` + `mkOutOfStoreSymlink` 链接到 `~/.config/niri/`，
+  使配置修改无需重新部署即可生效。链接源路径基于 `config.home.homeDirectory`，不要硬编码绝对路径。
+- Hyprland 配置通过 `xdg.configFile` 内联写入 `~/.config/hypr/hyprland.conf`，无需外部 dotfiles 仓库。
+- 两个桌面分支统一使用 Noctalia 作为桌面 shell，通过 `home/linux/gui/noctalia.nix` 统一配置。
 
 ### 2.5 Git 提交规范
 

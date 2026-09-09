@@ -8,7 +8,7 @@
 | 组件 | Niri 桌面 | Hyprland 桌面 | 服务器主机 |
 |------|----------|---------------|------------|
 | **窗口管理器** | [Niri](https://github.com/YaLTeR/niri)（scrollable-tiling） | [Hyprland](https://hyprland.org/)（dynamic tiling） | 无 |
-| **桌面 Shell** | [Noctalia](https://github.com/noctalia-dev/noctalia)（原生 Wayland） | dots-hyprland (illogical-impulse quickshell) | 无 |
+| **桌面 Shell** | [Noctalia](https://github.com/noctalia-dev/noctalia)（原生 Wayland） | Noctalia（与 Niri 分支统一） | 无 |
 | **Shell** | zsh + starship | zsh + starship | zsh + starship |
 | **编辑器** | vim（主）+ helix（备用） | vim + helix | vim |
 | **终端** | Ghostty（GPU 加速） | Ghostty | 无 |
@@ -23,7 +23,7 @@
 | 主机名 | Flake 输出 | 说明 |
 |--------|-----------|------|
 | `misty-desktop` | `.#misty-desktop` | Niri + Noctalia 日常桌面 |
-| `misty-hyprland` | `.#misty-hyprland` | Hyprland + dots-hyprland 桌面 |
+| `misty-hyprland` | `.#misty-hyprland` | Hyprland + Noctalia 桌面 |
 | `misty-server` | `.#misty-server` | 运行在虚拟化环境中的服务器 |
 
 ## 📁 目录结构
@@ -103,26 +103,7 @@ sudo nixos-install --root /mnt --flake .#misty-desktop --no-root-password
 reboot
 ```
 
-### 2. Hyprland 分支额外步骤
-
-Hyprland 分支使用 dots-hyprland (illogical-impulse) 的配置文件，需要额外克隆：
-
-```bash
-# 克隆 dots-hyprland 仓库并初始化子模块（quickshell 圆角组件等）
-git clone --recurse-submodules https://github.com/clsty/illogical-impulse.git ~/dots-hyprland
-
-# 如果已克隆但未初始化子模块：
-cd ~/dots-hyprland && git submodule update --init
-```
-
-配置文件通过符号链接从 `~/dots-hyprland/dots/.config/` 链接到 `~/.config/`：
-- `hypr/` — Hyprland Lua DSL 配置（hyprland.lua 入口 + hyprland/ + custom/）
-- `quickshell/` — illogical-impulse Quickshell UI shell（bar/lock/overview/sidebar 等）
-- `custom/` — 用户自定义覆盖目录，保持可写（修改 Hyprland 配置在此处进行）
-
-matugen 主题系统会在运行时生成颜色到 `~/.local/state/quickshell/user/generated/`，该目录首次启动时自动创建。
-
-### 3. 日常部署
+### 2. 日常部署
 
 ```bash
 cd ~/nixos-config
@@ -180,14 +161,14 @@ nix develop                         # 进入开发环境
 - 配置文件：`home/linux/gui/noctalia.nix`（通过 `programs.noctalia.settings` 以 Nix attrset 写入 TOML）
 - 运行时也可通过 Noctalia 的设置 GUI 修改
 - IPC 控制：`noctalia msg --help`
-- 原生支持 Niri 工作区集成（通过 ext-workspace-v1 协议）
+- 原生支持 Niri 和 Hyprland 工作区集成（通过 ext-workspace-v1 协议或 compositor-native backend）
+- 两个桌面分支统一使用 Noctalia，配置一致，便于管理
 
 ## 🖥️ Hyprland 分支配置
 
-- 配置文件来源：`~/dots-hyprland/dots/.config/`（通过 `xdg.configFile` 符号链接）
-- 配置格式：Lua（hyprland.lua + hyprland/ 目录 + custom/ 覆盖）
-- 桌面 Shell：dots-hyprland 的 quickshell 配置（illogical-impulse shell）
-- 自定义修改：编辑 `~/dots-hyprland/dots/.config/hypr/custom/` 下的文件
+- 配置文件：`home/linux/gui/hyprland.nix`（通过 `xdg.configFile` 写入 `~/.config/hypr/hyprland.conf`）
+- 桌面 Shell：Noctalia（与 Niri 分支统一，`exec-once = noctalia` 启动）
+- 自定义修改：编辑 `home/linux/gui/hyprland.nix` 中的 `xdg.configFile."hypr/hyprland.conf".text`
 
 ## 🔧 如何增删应用
 
@@ -228,22 +209,18 @@ nix develop                         # 进入开发环境
      - 方式一（推荐）：配置 sops-nix 管理密码和 SSH 公钥 → 见 [secrets/README.md](./secrets/README.md)
      - 方式二（快速试用）：直接修改 `vars/default.nix` 中的 `initialHashedPassword` 和 `mainSshAuthorizedKeys`
 
-2. **Hyprland 分支需要 dots-hyprland**：
-   - 克隆 dots-hyprland 到 `~/dots-hyprland`
-   - 配置通过符号链接引用，修改 dots-hyprland 中的文件即可
+2. **桌面 Shell 统一为 Noctalia**：
+   - Niri 和 Hyprland 分支均使用 Noctalia 作为桌面 shell
+   - Noctalia 原生支持 Niri 和 Hyprland 的工作区集成
+   - Hyprland 配置通过 `home/linux/gui/hyprland.nix` 内联生成（`hyprland.conf`），无需外部 dotfiles 仓库
 
-3. **Noctalia vs Caelestia Shell**：
-   - 本配置已从 caelestia-shell 迁移到 Noctalia
-   - Noctalia 原生支持 Niri（工作区集成通过 ext-workspace-v1）
-   - Caelestia Shell 深度依赖 Hyprland IPC，在 Niri 下仅部分功能可用
-
-4. **服务器主机**：
+3. **服务器主机**：
    - 服务器配置为运行在虚拟化环境中的客户机（非提供虚拟化服务）
    - 默认导入 `qemu-guest.nix`（QEMU 客户机支持）
    - 提供 Podman 容器运行时和基础服务器工具（tmux/rsync/jq/tcpdump 等）
    - 便于后续部署各种容器化服务
 
-5. **国内镜像加速**：
+4. **国内镜像加速**：
    - `flake.nix` 中已配置 USTC 镜像
 
 ## 📚 参考资料
@@ -252,7 +229,6 @@ nix develop                         # 进入开发环境
 - [Niri 配置文档](https://yalter.github.io/niri/)
 - [Noctalia 文档](https://docs.noctalia.dev/noctalia/)
 - [Hyprland Wiki](https://wiki.hyprland.org/)
-- [dots-hyprland (illogical-impulse)](https://github.com/clsty/illogical-impulse)
 - [Home Manager](https://nix-community.github.io/home-manager/)
 
 ## 📄 许可证

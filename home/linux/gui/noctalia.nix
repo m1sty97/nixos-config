@@ -1,11 +1,12 @@
 # =============================================================================
-# home/linux/gui/noctalia.nix — Noctalia 桌面 Shell 配置（Niri 分支）
+# home/linux/gui/noctalia.nix — Noctalia 桌面 Shell 配置（Niri / Hyprland 共用）
 # -----------------------------------------------------------------------------
 # Noctalia 是一个原生 Wayland + OpenGL ES 的桌面 shell（非 Qt/Gtk），
 # 提供：状态栏、启动器、通知中心、锁屏、壁纸、OSD、控制中心、剪贴板历史等。
 #
-# 与 caelestia-shell 不同，Noctalia **原生支持 Niri** 的工作区集成，
+# Noctalia 原生支持 Niri 和 Hyprland 的工作区集成，
 # 通过 ext-workspace-v1 协议或 compositor-native backend 实现工作区指示器。
+# 两个桌面分支（misty-desktop / misty-hyprland）统一使用 Noctalia 作为桌面 shell。
 #
 # 配置格式：TOML（通过 home-manager 的 programs.noctalia.settings 以 Nix attrset 写入）
 # 配置参考：https://docs.noctalia.dev/noctalia/configuration/

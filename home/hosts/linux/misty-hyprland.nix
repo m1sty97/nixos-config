@@ -1,7 +1,8 @@
 # =============================================================================
 # home/hosts/linux/misty-hyprland.nix — Hyprland 桌面主机 Home Manager 配置
 # -----------------------------------------------------------------------------
-# Hyprland 桌面主机导入完整的 GUI 配置，启用 Hyprland + dots-hyprland shell。
+# Hyprland 桌面主机导入完整的 GUI 配置，启用 Hyprland + Noctalia Shell。
+# Noctalia 通过 home/linux/gui/noctalia.nix 自动导入（scanPaths），两个分支共用。
 # =============================================================================
 { config, ... }:
 {

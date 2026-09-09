@@ -4,19 +4,9 @@
 # Hyprland 是一个动态平铺 Wayland 合成器。
 # 参考：https://wiki.hyprland.org/
 #
-# 配置文件采用 dots-hyprland (illogical-impulse) 的 Lua DSL 格式：
-#   - hyprland.lua       主入口（通过 require() 加载 hyprland/ 和 custom/ 模块）
-#   - hyprland/          核心 Hyprland 配置（env/execs/general/keybinds/rules/variables）
-#   - custom/            用户自定义覆盖（不会被更新覆盖，需要保持可写）
-#   - hypridle.conf      空闲管理
-#   - hyprlock.conf      锁屏
-#
-# ⚠️ 使用前需要：
-#   1. 克隆 dots-hyprland 仓库并初始化子模块：
-#      git clone --recurse-submodules <repo> ~/dots-hyprland
-#      # 或已克隆后：cd ~/dots-hyprland && git submodule update --init
-#   2. matugen 主题系统运行时写入 ~/.local/state/quickshell/user/generated/
-#      确保该目录存在且可写（首次启动 matugen 会自动创建）
+# 桌面 Shell 统一使用 Noctalia（与 Niri 分支一致），原生支持 Hyprland。
+# Hyprland 配置通过 xdg.configFile 写入 ~/.config/hypr/hyprland.conf，
+# 在配置中 spawn-at-startup 启动 Noctalia。
 # =============================================================================
 {
   pkgs,
@@ -26,7 +16,6 @@
 }:
 let
   cfg = config.modules.desktop.hyprland;
-  dotsHyprDir = "${config.home.homeDirectory}/dots-hyprland/dots/.config";
 in
 {
   # ---------------------------------------------------------------------------
@@ -39,40 +28,176 @@ in
   config = lib.mkIf cfg.enable {
     home.packages = with pkgs; [
       # Hyprland 相关工具
-      hypridle
-      hyprlock
-      hyprpicker
-
-      # 截图
-      grim
-      slurp
-
-      # 剪贴板
-      wl-clipboard
-      cliphist
-
-      # 壁纸
-      hyprpaper
-      swww
-
-      # 其他
-      brightnessctl
-      matugen
+      hyprpicker # 取色器
+      grim       # 截图
+      slurp      # 区域选择
+      wl-clipboard # 剪贴板
+      brightnessctl # 亮度控制
     ];
 
     # ---------------------------------------------------------------------------
-    # Hyprland 配置文件 — 链接 dots-hyprland 的配置到 ~/.config/
+    # Hyprland 配置文件 — 写入 ~/.config/hypr/hyprland.conf
+    # 参考：https://wiki.hyprland.org/Configuring/
     # ---------------------------------------------------------------------------
-    xdg.configFile = let
-      mkSymlink = config.lib.file.mkOutOfStoreSymlink;
-    in {
-      "hypr/hyprland.lua".source = mkSymlink "${dotsHyprDir}/hypr/hyprland.lua";
-      "hypr/hypridle.conf".source = mkSymlink "${dotsHyprDir}/hypr/hypridle.conf";
-      "hypr/hyprlock.conf".source = mkSymlink "${dotsHyprDir}/hypr/hyprlock.conf";
-      "hypr/hyprland".source = mkSymlink "${dotsHyprDir}/hypr/hyprland";
-      "hypr/custom".source = mkSymlink "${dotsHyprDir}/hypr/custom";
-      "quickshell".source = mkSymlink "${dotsHyprDir}/quickshell";
-    };
+    xdg.configFile."hypr/hyprland.conf".text = ''
+      # =============================================================================
+      # Hyprland 配置 — 由 home-manager 生成
+      # =============================================================================
+
+      # ── 环境变量 ──
+      env = XDG_CURRENT_DESKTOP,Hyprland
+      env = XDG_SESSION_TYPE,wayland
+      env = XDG_SESSION_DESKTOP,Hyprland
+      env = QT_QPA_PLATFORM,wayland;xcb
+      env = MOZ_ENABLE_WAYLAND,1
+      env = NIXOS_OZONE_WL,1
+      env = ELECTRON_OZONE_PLATFORM_HINT,auto
+
+      # ── 输入设备 ──
+      input {
+          kb_layout = us
+          follow_mouse = 1
+          touchpad {
+              natural_scroll = yes
+              clickfinger_behavior = true
+          }
+          sensitivity = 0
+      }
+
+      # ── 布局 ──
+      general {
+          gaps_in = 8
+          gaps_out = 12
+          border_size = 2
+          # catppuccin macchiato 蓝色边框
+          col.active_border = rgba(8aadf4ff)
+          col.inactive_border = rgba(494d64ff)
+          layout = dwindle
+      }
+
+      decoration {
+          rounding = 10
+          blur {
+              enabled = true
+              size = 3
+              passes = 1
+          }
+          drop_shadow = yes
+          shadow_range = 4
+          shadow_render_power = 3
+          col.shadow = rgba(1e1e2eff)
+      }
+
+      animations {
+          enabled = yes
+          bezier = easeOut, 0.05, 0.9, 0.1, 1.05
+          animation = windows, 1, 5, easeOut, slide
+          animation = windowsOut, 1, 5, easeOut, slide
+          animation = borders, 1, 8, default
+          animation = fade, 1, 5, default
+          animation = workspaces, 1, 5, easeOut, slide
+      }
+
+      dwindle {
+          pseudotile = yes
+          preserve_split = yes
+      }
+
+      # ── 启动时执行 ──
+      exec-once = noctalia
+      exec-once = fcitx5 -d --replace
+
+      # ── 快捷键 ──
+      # Mod 键 = Super
+      $mod = SUPER
+
+      # 应用启动
+      bind = $mod, T, exec, ghostty
+      bind = $mod, W, exec, firefox
+      bind = $mod, E, exec, thunar
+      bind = $mod, D, exec, noctalia msg launcher-toggle
+
+      # 窗口管理
+      bind = $mod, Q, killactive,
+      bind = $mod, F, fullscreen,
+      bind = $mod, Space, togglefloating,
+      bind = $mod, Return, togglesplit,
+
+      # 焦点移动
+      bind = $mod, left, movefocus, l
+      bind = $mod, right, movefocus, r
+      bind = $mod, up, movefocus, u
+      bind = $mod, down, movefocus, d
+
+      # 移动窗口
+      bind = $mod SHIFT, left, movewindow, l
+      bind = $mod SHIFT, right, movewindow, r
+      bind = $mod SHIFT, up, movewindow, u
+      bind = $mod SHIFT, down, movewindow, d
+
+      # 工作区
+      bind = $mod, 1, workspace, 1
+      bind = $mod, 2, workspace, 2
+      bind = $mod, 3, workspace, 3
+      bind = $mod, 4, workspace, 4
+      bind = $mod, 5, workspace, 5
+      bind = $mod, 6, workspace, 6
+      bind = $mod, 7, workspace, 7
+      bind = $mod, 8, workspace, 8
+      bind = $mod, 9, workspace, 9
+      bind = $mod, 0, workspace, 10
+
+      bind = $mod SHIFT, 1, movetoworkspace, 1
+      bind = $mod SHIFT, 2, movetoworkspace, 2
+      bind = $mod SHIFT, 3, movetoworkspace, 3
+      bind = $mod SHIFT, 4, movetoworkspace, 4
+      bind = $mod SHIFT, 5, movetoworkspace, 5
+      bind = $mod SHIFT, 6, movetoworkspace, 6
+      bind = $mod SHIFT, 7, movetoworkspace, 7
+      bind = $mod SHIFT, 8, movetoworkspace, 8
+      bind = $mod SHIFT, 9, movetoworkspace, 9
+      bind = $mod SHIFT, 0, movetoworkspace, 10
+
+      # 工作区滚动
+      bind = $mod, mouse_down, workspace, e+1
+      bind = $mod, mouse_up, workspace, e-1
+
+      # 会话
+      bind = $mod, L, exec, hyprlock
+      bind = $mod SHIFT, E, exit,
+      bind = $mod SHIFT, R, exec, noctalia msg restart
+
+      # 截图
+      bind = , Print, exec, grim -g "$(slurp)" - | wl-copy
+
+      # 音量（需要 pactl）
+      bind = , XF86AudioMute, exec, pactl set-sink-mute @DEFAULT_SINK@ toggle
+      bind = , XF86AudioRaiseVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ +5%
+      bind = , XF86AudioLowerVolume, exec, pactl set-sink-volume @DEFAULT_SINK@ -5%
+
+      # 媒体控制
+      bind = , XF86AudioPlay, exec, playerctl play-pause
+      bind = , XF86AudioNext, exec, playerctl next
+      bind = , XF86AudioPrev, exec, playerctl previous
+
+      # ── 窗口规则 ──
+      windowrule = float, ^(dialog)$
+      windowrule = float, ^(popup)$
+      windowrule = float, ^(file-chooser)$
+
+      # ── 修饰键 ──
+      gestures {
+          workspace_swipe = true
+          workspace_swipe_forever = true
+      }
+
+      # ── 杂项 ──
+      misc {
+          disable_hyprland_logo = true
+          disable_splash_rendering = true
+          focus_on_activate = true
+      }
+    '';
 
     # ---------------------------------------------------------------------------
     # Wayland 会话启动脚本
