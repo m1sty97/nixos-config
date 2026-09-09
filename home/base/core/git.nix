@@ -28,8 +28,8 @@
 
     settings = {
       # 用户信息
-      user.email = myvars.useremail;
-      user.name = myvars.userfullname;
+      user.email = myvars.gituseremail;
+      user.name = myvars.gitusername;
 
       # 初始分支名
       init.defaultBranch = "main";

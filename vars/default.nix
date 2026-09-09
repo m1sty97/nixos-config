@@ -11,7 +11,10 @@
   # ---------------------------------------------------------------------------
   username = "misty";
   userfullname = "Misty";
-  useremail = "misty@example.com";
+  useremail = "wei251x@gmail.com";
+
+  gitusername = "m1sty97";
+  gituseremail = "wei251x@gmail.com";
 
   # ---------------------------------------------------------------------------
   # 初始登录密码的哈希值（回退方案 — 优先使用 sops 管理）
