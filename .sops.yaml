@@ -29,4 +29,4 @@ creation_rules:
     # 生成方式：age-keygen -o ~/.config/sops/age/keys.txt
     # 输出的公钥行格式：# public key: age1xxx...
     age:
-      - "age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      - "age1rhtemyparsqvjwf0fprgpw5ngxdkeeaq3dp0z7h26rl9yxe5sanqam0gzh"
