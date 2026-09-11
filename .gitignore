@@ -23,6 +23,10 @@ hardware-configuration.nix.bak
 age/keys.txt
 *.age
 
+# ⚠️ 明文过渡期：secrets.yaml 暂时以明文形式存在于工作区（待填写后由 sops 重新加密）。
+# 加密完成后：删除下面这一行，再 git add secrets/secrets.yaml 提交加密版本。
+secrets/secrets.yaml
+
 # sops 解密后的明文文件（sops -d 输出）
 secrets/*.decrypted.*
 secrets/*-plaintext.*
