@@ -12,6 +12,7 @@
   myvars,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 let
@@ -23,7 +24,11 @@ in
   # 导入主机特定文件
   # ---------------------------------------------------------------------------
   imports = [
-    # 硬件配置 — 首次安装后用 nixos-generate-config 生成
+    # 磁盘分区声明 — 由 disko 声明式管理，自动生成 fileSystems
+    inputs.disko.nixosModules.default
+    ./disko.nix
+
+    # 硬件配置 — 仅内核模块等硬件相关内容
     ./hardware-configuration.nix
   ];
 

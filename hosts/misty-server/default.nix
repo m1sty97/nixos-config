@@ -11,6 +11,7 @@
   myvars,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 let
@@ -18,6 +19,10 @@ let
 in
 {
   imports = [
+    # 磁盘分区声明 — 由 disko 声明式管理，自动生成 fileSystems
+    inputs.disko.nixosModules.default
+    ./disko.nix
+
     # 硬件配置
     ./hardware-configuration.nix
 

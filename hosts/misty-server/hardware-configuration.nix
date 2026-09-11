@@ -1,32 +1,11 @@
 # =============================================================================
-# hosts/misty-server/hardware-configuration.nix — 硬件配置占位文件
+# hosts/misty-server/hardware-configuration.nix — 硬件相关配置
 # -----------------------------------------------------------------------------
-# ⚠️ 这是占位文件！
-# 首次安装时，请在 NixOS Live 环境中运行以下命令生成真实的硬件配置：
+# 磁盘分区与文件系统由 disko 声明式管理（见同目录 disko.nix），
+# 挂载点与交换分区由 disko 自动生成，此处不要重复定义。
 #
-#   sudo nixos-generate-config --show-hardware-config > hardware-configuration.nix
-#
-# 然后将生成的文件复制到此处替换本文件。
+# 作为 QEMU/KVM 虚拟机运行，initrd 内核模块由 qemu-guest profile
+# （modules/nixos/server/qemu-guest.nix）自动处理，无需手动维护。
 # =============================================================================
 { ... }:
-{
-  # 引导加载器（UEFI 系统）
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-
-  # 基本文件系统（请根据实际情况修改）
-  fileSystems."/" = {
-    device = "/dev/disk/by-label/nixos";
-    fsType = "ext4";
-  };
-
-  fileSystems."/boot" = {
-    device = "/dev/disk/by-label/boot";
-    fsType = "vfat";
-  };
-
-  # 交换分区
-  swapDevices = [
-    { device = "/dev/disk/by-label/swap"; }
-  ];
-}
+{ }
