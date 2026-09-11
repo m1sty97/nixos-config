@@ -136,8 +136,8 @@
 
 - [ ] 运行 `nix fmt`（如有 Nix 环境）格式化所有 `.nix` 文件。
 - [ ] 检查 `git diff --check` 无空白错误。
-- [ ] 如有 `flake.lock` 变更，确认是预期内的（`nix flake update` 产生），不要意外提交
-  `flake.lock` 的自动变更。
+- [ ] `flake.lock` 已有意纳入版本控制。依赖更新由 `nix flake update` 产生，
+  将其变更以 `chore:` 前缀单独提交，不要与其他功能改动混在一起。
 
 ### 3.3 功能验证
 
@@ -171,6 +171,7 @@
 ```
 nixos-config/
 ├── flake.nix              # 入口：定义 inputs（含 sops-nix）
+├── flake.lock             # 依赖锁定文件（有意提交到版本控制）
 ├── .sops.yaml             # sops 加密配置（age 公钥）
 ├── outputs/default.nix    # 组装 nixosConfigurations（3 台主机）
 ├── lib/                   # mylib：scanPaths / nixosSystem
