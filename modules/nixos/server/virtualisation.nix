@@ -6,7 +6,6 @@
 # =============================================================================
 {
   pkgs,
-  lib,
   ...
 }:
 {
@@ -24,31 +23,10 @@
   # boot.kernelParams = [ "console=ttyS0" ];
 
   # ---------------------------------------------------------------------------
-  # 容器运行时（轻量级，便于后续部署容器化服务）
-  # ---------------------------------------------------------------------------
-  virtualisation = {
-    docker.enable = false;
-    podman = {
-      enable = true;
-      dockerCompat = true; # docker 命令别名
-      defaultNetwork.settings.dns_enabled = true;
-      autoPrune = {
-        enable = true;
-        dates = "weekly";
-        flags = [ "--all" ];
-      };
-    };
-    oci-containers.backend = "podman";
-  };
-
-  # ---------------------------------------------------------------------------
   # 服务器基础工具包
   # 便于后续部署各种服务
   # ---------------------------------------------------------------------------
   environment.systemPackages = with pkgs; [
-    # 容器工具
-    podman-compose # docker-compose 兼容的容器编排
-
     # 网络工具
     iptables # 防火墙管理
     bridge-utils # 网桥管理

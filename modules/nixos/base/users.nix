@@ -42,13 +42,11 @@
     # - networkmanager — 网络管理
     # - video      — 视频设备访问（亮度控制等）
     # - input      — 输入设备访问
-    # - docker     — Docker 容器（即使使用 podman 也保留）
     extraGroups = [
       "wheel"
       "networkmanager"
       "video"
       "input"
-      "docker"
     ];
 
     # 默认 shell 设为 zsh

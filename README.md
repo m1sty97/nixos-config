@@ -14,7 +14,7 @@
 | **终端** | Ghostty（GPU 加速） | 无 |
 | **输入法** | fcitx5 + rime | 无 |
 | **主题** | Catppuccin Macchiato | — |
-| **容器** | Podman + Flatpak | Podman |
+| **容器** | 无（QEMU/KVM 虚拟化可用） | 无 |
 | **网络** | NetworkManager | NetworkManager |
 | **登录管理** | greetd + tuigreet（会话菜单切换合成器） | SSH |
 
@@ -41,7 +41,7 @@ nixos-config/
 │   └── server/                  #   服务器专属
 │       ├── default.nix          #     服务器基础（导入 base + virtualisation）
 │       ├── qemu-guest.nix       #     QEMU 客户机配置
-│       └── virtualisation.nix   #     虚拟化客户机工具（Podman + 服务器基础工具）
+│       └── virtualisation.nix   #     虚拟化客户机工具（QEMU 客户机 + 服务器基础工具）
 │
 ├── home/                        # 用户级模块（home-manager）
 │   ├── base/                    #   跨平台用户配置
@@ -230,7 +230,7 @@ nix develop                         # 进入开发环境
 3. **服务器主机**：
    - 服务器配置为运行在虚拟化环境中的客户机（非提供虚拟化服务）
    - 默认导入 `qemu-guest.nix`（QEMU 客户机支持）
-   - 提供 Podman 容器运行时和基础服务器工具（tmux/rsync/jq/tcpdump 等）
+   - 提供基础服务器工具（tmux/rsync/jq/tcpdump 等）
    - 便于后续部署各种容器化服务
 
 4. **国内镜像加速**：
