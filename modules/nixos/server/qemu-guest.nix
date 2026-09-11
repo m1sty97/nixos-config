@@ -20,11 +20,7 @@
     boot.growPartition = true;
     # 串口控制台输出（KubeVirt/Proxmox 需要）
     boot.kernelParams = [ "console=ttyS0" ];
-    # GRUB 引导设备
-    boot.loader.grub.device = "/dev/vda";
-    # 虚拟机使用 GRUB/BIOS 引导，关闭 base 默认启用的 systemd-boot
-    boot.loader.systemd-boot.enable = lib.mkForce false;
-    boot.loader.efi.canTouchEfiVariables = lib.mkForce false;
+    # 引导配置（UEFI + GRUB2）由 base/core.nix 统一提供，此处无需覆盖
 
     # QEMU Guest Agent — 虚拟化管理平台需要
     services.qemuGuest.enable = true;

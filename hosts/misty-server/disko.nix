@@ -2,9 +2,9 @@
 # hosts/misty-server/disko.nix — 磁盘分区声明（disko）
 # -----------------------------------------------------------------------------
 # 由 disko 声明式管理服务器虚拟机的磁盘布局：
-#   GPT：BIOS boot(1M, GRUB 引导用) + swap(4G) + ext4(其余空间, 挂载 /)
-# 服务器作为 QEMU/KVM 虚拟机运行，通过 GRUB/BIOS 引导（见 qemu-guest.nix），
-# 因此无需 ESP，但需要 EF02 类型的 BIOS 引导分区供 GRUB 嵌入。
+#   GPT：ESP(512M, 挂载 /boot) + swap(4G) + 根分区(其余空间, 挂载 /)
+# 服务器以 UEFI + GRUB2 引导（与桌面主机一致，见 base/core.nix），
+# 因此需要 EF00 类型的 EFI 系统分区挂载为 /boot。
 #
 # 装机命令（⚠️ 会清空目标磁盘上的全部数据）：
 #   sudo nix run github:nix-community/disko -- \
@@ -22,11 +22,18 @@ in
     content = {
       type = "gpt";
       partitions = {
-        # BIOS 引导分区（EF02）— GRUB 在 GPT 磁盘上需要 1M 嵌入空间
-        biosboot = {
-          size = "1M";
-          type = "EF02";
+        # EFI 系统分区（EF00），挂载为 /boot
+        ESP = {
+          size = "512M";
+          type = "EF00";
           priority = 1;
+          content = {
+            type = "filesystem";
+            format = "vfat";
+            mountpoint = "/boot";
+            # 仅 root 可读写 ESP
+            mountOptions = [ "fmask=0077" "dmask=0077" ];
+          };
         };
 
         # 交换分区
@@ -35,7 +42,7 @@ in
           content.type = "swap";
         };
 
-        # 根分区（ext4，服务器布局保持简单）
+        # 根分区（ext4）
         root = {
           size = "100%";
           content = {
