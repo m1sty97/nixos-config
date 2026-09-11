@@ -27,8 +27,13 @@
   nixpkgs 版本一致。`outputs/default.nix` 中的 `genSpecialArgs` 负责将 `inputs`、
   `mylib`、`myvars`、`pkgs-stable` 传递给所有模块。
 - **主机在 `outputs/default.nix` 中组装**。新增主机需要同步创建：
-  `hosts/<名>/default.nix` + `hosts/<名>/hardware-configuration.nix` +
+  `hosts/<名>/default.nix` + `hosts/<名>/disko.nix` +
+  `hosts/<名>/hardware-configuration.nix` +
   `home/hosts/linux/<名>.nix` + 在 `outputs/default.nix` 中添加 `nixosConfigurations` 条目。
+- **磁盘布局由 disko 声明式管理**。每台主机的分区/格式化定义在 `hosts/<名>/disko.nix`，
+  挂载点由 disko 自动生成；`hardware-configuration.nix` 仅保留内核模块等硬件相关配置，
+  **不要在其中重复定义 `fileSystems` / `swapDevices`**，否则与 disko 生成的内容冲突。
+  `disko.nix` 顶部的 `diskDevice` 需在装机前用 `lsblk` 确认实际磁盘设备名。
 
 ### 1.3 环境检查
 
@@ -190,7 +195,7 @@ nixos-config/
 │   ├── base/gui/          #   GUI 配置（ghostty/firefox/media/gtk）
 │   ├── linux/gui/         #   WM 配置（niri/noctalia/hyprland/fcitx5）
 │   └── hosts/linux/       #   主机专属 home 入口
-└── hosts/                 # 主机系统级配置
+└── hosts/                 # 主机系统级配置（每台含 disko.nix 磁盘布局）
     ├── misty-desktop/     #   Niri 桌面
     ├── misty-hyprland/    #   Hyprland 桌面
     └── misty-server/      #   服务器
@@ -204,6 +209,8 @@ sudo nixos-rebuild switch --flake .#misty-hyprland  # Hyprland 桌面
 sudo nixos-rebuild switch --flake .#misty-server    # 服务器
 nix flake update                                     # 更新所有 inputs
 nix fmt                                              # 格式化 Nix 代码
+# ⚠️ 装机分区（清空目标磁盘，设备名见 hosts/<名>/disko.nix）
+sudo nix run github:nix-community/disko -- --mode destroy,format,mount hosts/<名>/disko.nix
 ```
 
 ## 6. 参考文档

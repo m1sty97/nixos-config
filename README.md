@@ -68,8 +68,10 @@ nixos-config/
 │
 ├── hosts/                       # 主机系统级配置
 │   ├── misty-desktop/           #   Niri 桌面
+│   │   ├── disko.nix            #     磁盘分区声明（disko）
+│   │   └── hardware-configuration.nix  # 内核模块等硬件相关配置
 │   ├── misty-hyprland/          #   Hyprland 桌面
-│   └── misty-server/            #   服务器
+│   └── misty-server/            #   服务器（disko.nix + qemu-guest）
 │
 └── outputs/
     └── default.nix              # 组装 3 个 nixosConfigurations
@@ -86,22 +88,31 @@ nixos-config/
 git clone <你的仓库地址> ~/nixos-config
 cd ~/nixos-config
 
-# 3. 生成硬件配置
-sudo nixos-generate-config --show-hardware-config > hosts/misty-desktop/hardware-configuration.nix
+# 3. 确认目标磁盘设备名（⚠️ 下一步会清空该磁盘上的全部数据！）
+lsblk
 
-# 4. 编辑 vars/default.nix，修改：
+# 4. 修改 hosts/misty-desktop/disko.nix 顶部的 diskDevice 为实际磁盘设备
+
+# 5. 声明式分区、格式化并挂载到 /mnt（磁盘布局由 disko.nix 定义）
+sudo nix run github:nix-community/disko -- --mode destroy,format,mount hosts/misty-desktop/disko.nix
+
+# 6. 编辑 vars/default.nix，修改：
 #    - initialHashedPassword（用 `mkpasswd -m yescrypt` 生成）
 #    - mainSshAuthorizedKeys（你的 SSH 公钥）
 #    - useremail
 
-# 5. 编辑 vars/networking.nix，修改网络配置
+# 7. 编辑 vars/networking.nix，修改网络配置
 
-# 6. 安装 NixOS
-sudo nixos-install --root /mnt --flake .#misty-desktop --no-root-password
+# 8. 安装 NixOS
+sudo nixos-install --flake .#misty-desktop --no-root-password
 
-# 7. 重启
+# 9. 重启
 reboot
 ```
+
+> 磁盘分区布局由 [disko](https://github.com/nix-community/disko) 声明式管理，
+> 装机时不再需要手动 `gdisk`/`mkfs`。`hardware-configuration.nix` 仅保留
+> 内核模块等硬件相关配置。重装系统只需重复步骤 5-8。
 
 ### 2. 日常部署
 
