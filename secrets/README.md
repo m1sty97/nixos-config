@@ -45,14 +45,14 @@ creation_rules:
 sops secrets/secrets.yaml
 ```
 
-在编辑器中填入实际的密钥值：
+在编辑器中填入实际的密钥值（注意 `authorized_keys` 是多行字符串，每行一个公钥）：
 
 ```yaml
 misty:
     hashed_password: "$y$j9T$你的真实密码哈希"
 ssh:
-    authorized_keys:
-        - "ssh-ed25519 AAAA... misty@desktop"
+    authorized_keys: |-
+        ssh-ed25519 AAAA... misty@desktop
 ```
 
 ### 4. 部署 age 私钥到主机
@@ -82,7 +82,7 @@ cat /run/secrets/misty/hashed_password
 | 路径 | 说明 | 使用位置 |
 |------|------|----------|
 | `misty/hashed_password` | 用户密码哈希 | `modules/nixos/base/users.nix` → `hashedPasswordFile` |
-| `ssh/authorized_keys` | SSH 公钥列表 | `modules/nixos/base/users.nix` → `openssh.authorizedKeys` |
+| `ssh/authorized_keys` | SSH 公钥（多行字符串） | `modules/nixos/base/users.nix` → `openssh.authorizedKeys.files` |
 
 ## 添加新密钥
 

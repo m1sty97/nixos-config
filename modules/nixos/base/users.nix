@@ -33,9 +33,15 @@
 
     # ---------------------------------------------------------------------------
     # 可登录的 SSH 公钥
-    # 优先从 sops 读取，回退到 vars 中的配置
+    # keys  — vars 中的静态配置（sops 未配置时的回退，当前为空）
+    # files — sops 解密出的公钥文件，由 sshd 运行时读取（实际生效的来源）
     # ---------------------------------------------------------------------------
-    openssh.authorizedKeys.keys = myvars.mainSshAuthorizedKeys;
+    openssh.authorizedKeys = {
+      keys = myvars.mainSshAuthorizedKeys;
+      files = lib.mkIf (config.sops.secrets ? "ssh/authorized_keys") [
+        config.sops.secrets."ssh/authorized_keys".path
+      ];
+    };
 
     # 加入以下用户组：
     # - wheel      — sudo 提权

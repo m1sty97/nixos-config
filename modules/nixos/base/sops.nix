@@ -60,9 +60,9 @@
       };
 
       # SSH 公钥 — 从 secrets.yaml 中的 ssh.authorized_keys 读取
-      "ssh/authorized_keys" = {
-        format = "binary"; # SSH 公钥以二进制格式读取
-      };
+      # 值为多行字符串（每行一个公钥），由 sshd 运行时经
+      # users.nix 的 openssh.authorizedKeys.files 读取
+      "ssh/authorized_keys" = { };
     };
   };
 }
