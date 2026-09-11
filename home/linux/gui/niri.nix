@@ -15,6 +15,9 @@
 }:
 let
   cfg = config.modules.desktop.niri;
+  # mkOutOfStoreSymlink 必须指向本机磁盘上的真实文件（而非 nix store），
+  # 才能做到改配置不 rebuild 即生效。因此假定仓库按 README 安装步骤
+  # clone 在 ~/nixos-config；若检出路径不同，请同步修改此处。
   confDir = "${config.home.homeDirectory}/nixos-config/home/linux/gui/niri/conf";
 in
 {
