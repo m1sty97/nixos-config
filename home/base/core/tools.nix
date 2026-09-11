@@ -13,9 +13,10 @@
 
     # 核心工具
     gnupg # GnuPG 加密
-    cowsay # 趣味输出
 
-    # 代码搜索工具
+    # 搜索工具
+    ripgrep # rg — vim/fzf 高频使用的代码搜索
+    fd # find 的现代替代，fzf 文件搜索后端
     ast-grep # 语法感知的代码搜索/重写
   ];
 

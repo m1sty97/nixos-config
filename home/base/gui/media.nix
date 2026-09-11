@@ -7,16 +7,14 @@
 {
   home.packages = with pkgs; [
     # 音频控制
-    pavucontrol # PulseAudio 音量控制 GUI
+    pavucontrol # 音量控制 GUI
     playerctl # 媒体播放控制
-    pulsemixer # 终端音频混音器
 
     # 图片查看
     imv # 轻量级 Wayland 图片查看器
 
-    # 视频/音频工具
-    libva-utils # VA-API 硬件加速检测
-    vdpauinfo # VDPAU 信息
+    # 硬件加速检测
+    libva-utils # VA-API 信息
 
     # 录屏工具
     wf-recorder # Wayland 屏幕录制

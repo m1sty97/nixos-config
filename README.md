@@ -10,7 +10,8 @@
 | **窗口管理器** | [Niri](https://github.com/YaLTeR/niri)（scrollable-tiling）+ [Hyprland](https://hyprland.org/)（dynamic tiling），登录时切换 | 无 |
 | **桌面 Shell** | [Noctalia](https://github.com/noctalia-dev/noctalia)（原生 Wayland，两个合成器共用） | 无 |
 | **Shell** | zsh + starship | zsh + starship |
-| **编辑器** | vim（主）+ helix（备用） | vim |
+| **编辑器** | vim（终端，主）+ VS Code（图形） | vim |
+| **浏览器** | Chrome（主）+ Firefox（备用） | 无 |
 | **终端** | Ghostty（GPU 加速） | 无 |
 | **输入法** | fcitx5 + rime | 无 |
 | **主题** | Catppuccin Macchiato | — |
@@ -47,12 +48,13 @@ nixos-config/
 │   ├── base/                    #   跨平台用户配置
 │   │   ├── core/                #     核心配置
 │   │   │   ├── shells.nix       #       zsh + starship
-│   │   │   ├── editor.nix       #       vim + helix
+│   │   │   ├── editor.nix       #       vim（默认编辑器）
 │   │   │   ├── git.nix          #       git + delta + lazygit
-│   │   │   └── tools.nix        #       eza/bat/fzf/zoxide/btop/yazi
+│   │   │   └── tools.nix        #       eza/bat/fzf/zoxide/btop/yazi/rg/fd
 │   │   └── gui/                 #     GUI 配置
 │   │       ├── terminal.nix     #       Ghostty 终端
-│   │       ├── browsers.nix     #       Firefox + Chrome
+│   │       ├── browsers.nix     #       Chrome（主）+ Firefox（备用）
+│   │       ├── vscode.nix       #       VS Code 图形编辑器
 │   │       └── media.nix        #       mpv/pavucontrol/imv
 │   ├── linux/gui/
 │   │   ├── niri.nix             #       Niri WM（mkIf 条件启用）
@@ -150,7 +152,7 @@ nix develop                         # 进入开发环境
 | 快捷键 | 功能 |
 |--------|------|
 | `Mod + T` | 打开终端 (Ghostty) |
-| `Mod + W` | 打开浏览器 (Firefox) |
+| `Mod + W` | 打开浏览器 (Chrome) |
 | `Mod + E` | 打开文件管理器 (Thunar) |
 | `Mod + Q` | 关闭窗口 |
 | `Mod + F` | 最大化列 |

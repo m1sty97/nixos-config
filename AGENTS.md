@@ -196,8 +196,8 @@ nixos-config/
 │   ├── desktop.nix        #   桌面入口
 │   └── hyprland.nix       #   Hyprland 系统级
 ├── home/                  # home-manager 用户级
-│   ├── base/core/         #   核心配置（zsh/starship/vim/helix/git/tools）
-│   ├── base/gui/          #   GUI 配置（ghostty/firefox/media/gtk）
+│   ├── base/core/         #   核心配置（zsh/starship/vim/git/tools）
+│   ├── base/gui/          #   GUI 配置（ghostty/browsers/media/vscode/gtk）
 │   ├── linux/gui/         #   GUI 配置（noctalia/fcitx5 共用 + niri/hyprland WM 模块）
 │   └── hosts/linux/       #   主机专属 home 入口
 └── hosts/                 # 主机系统级配置（每台含 disko.nix 磁盘布局）

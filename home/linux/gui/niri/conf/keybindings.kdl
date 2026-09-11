@@ -9,9 +9,9 @@
 // 应用启动
 // -----------------------------------------------------------------------------
 Mod+T { spawn "ghostty"; }                          // 终端
-Mod+W { spawn "firefox"; }                        // 浏览器
+Mod+W { spawn "google-chrome-stable"; }             // 浏览器（Chrome 主力）
 Mod+E { spawn "thunar"; }                         // 文件管理器
-Mod+D { spawn "fuzzel"; }                         // 应用启动器（需要安装 fuzzel）
+Mod+D { spawn "noctalia" "msg" "launcher-toggle"; } // 应用启动器（Noctalia，与 Hyprland 一致）
 
 // -----------------------------------------------------------------------------
 // 窗口管理

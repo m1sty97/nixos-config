@@ -33,9 +33,7 @@ in
       # XWayland 兼容层（运行 X11 应用）
       xwayland-satellite
 
-      # 截图标注
-      slurp
-      grim
+      # 截图标注（grim/slurp 由 desktop-tools.nix 统一安装）
       satty
 
       # polkit 认证代理（GUI 提权对话框）

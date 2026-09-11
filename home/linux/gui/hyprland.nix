@@ -26,15 +26,9 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = with pkgs; [
-      # Hyprland 相关工具
-      hyprpicker # 取色器
-      grim       # 截图
-      slurp      # 区域选择
-      wl-clipboard # 剪贴板
-      brightnessctl # 亮度控制
-    ];
-
+    # Hyprland 本体与依赖（polkit 等）由系统级模块（modules/nixos/hyprland.nix）
+    # 启用；截图/剪贴板/亮度等工具由 desktop-tools.nix 统一安装，此处不重复。
+    #
     # ---------------------------------------------------------------------------
     # Hyprland 配置文件 — 写入 ~/.config/hypr/hyprland.conf
     # 参考：https://wiki.hyprland.org/Configuring/
@@ -113,7 +107,7 @@ in
 
       # 应用启动
       bind = $mod, T, exec, ghostty
-      bind = $mod, W, exec, firefox
+      bind = $mod, W, exec, google-chrome-stable
       bind = $mod, E, exec, thunar
       bind = $mod, D, exec, noctalia msg launcher-toggle
 

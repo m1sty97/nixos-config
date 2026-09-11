@@ -1,12 +1,20 @@
 # =============================================================================
 # home/base/gui/browsers.nix — 浏览器配置
 # -----------------------------------------------------------------------------
-# Firefox 和 Chrome 作为默认浏览器。
+# Google Chrome 为主力浏览器，Firefox 为备用浏览器（仅桌面主机）。
+# 通过 xdg.mimeApps 将 http/https 默认处理程序设为 Chrome。
 # =============================================================================
 { pkgs, ... }:
 {
   # ---------------------------------------------------------------------------
-  # Firefox — 主力浏览器
+  # Google Chrome — 主力浏览器
+  # ---------------------------------------------------------------------------
+  programs.google-chrome = {
+    enable = true;
+  };
+
+  # ---------------------------------------------------------------------------
+  # Firefox — 备用浏览器
   # ---------------------------------------------------------------------------
   programs.firefox = {
     enable = true;
@@ -29,15 +37,21 @@
       # 扩展程序
       extensions = with pkgs.nur.repos.rycee.firefox-addons; [
         ublock-origin # 广告拦截
-        catppuccin-gh-stars # GitHub 主题（可选）
       ];
     };
   };
 
   # ---------------------------------------------------------------------------
-  # Google Chrome — 备用浏览器
+  # 默认浏览器设为 Chrome
   # ---------------------------------------------------------------------------
-  programs.google-chrome = {
+  xdg.mimeApps = {
     enable = true;
+    defaultApplications = {
+      "text/html" = [ "google-chrome.desktop" ];
+      "x-scheme-handler/http" = [ "google-chrome.desktop" ];
+      "x-scheme-handler/https" = [ "google-chrome.desktop" ];
+      "x-scheme-handler/about" = [ "google-chrome.desktop" ];
+      "x-scheme-handler/unknown" = [ "google-chrome.desktop" ];
+    };
   };
 }

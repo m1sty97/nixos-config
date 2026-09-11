@@ -51,9 +51,4 @@
       macos-option-as-alt = true;
     };
   };
-
-  # 额外的终端工具
-  home.packages = with pkgs; [
-    wl-clipboard # Wayland 剪贴板工具（Ghostty 复制粘贴需要）
-  ];
 }

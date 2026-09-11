@@ -35,9 +35,6 @@
 
     # 监控工具
     htop # 进程监控
-    iotop # I/O 监控
-    iftop # 网络流量监控
-    nethogs # 按进程网络流量
 
     # 文件传输
     rsync # 增量文件同步

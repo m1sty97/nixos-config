@@ -8,7 +8,6 @@
   environment.systemPackages = with pkgs; [
     # 系统调用监控
     strace # 系统调用追踪
-    ltrace # 库调用追踪
     lsof # 查看打开的文件
 
     # 系统监控
@@ -23,6 +22,8 @@
     # 基础工具
     psmisc # killall/pstree 等
     parted # 分区工具
+    unzip # 解压 zip
+    zip # 压缩 zip
     wget
     curl
     git

@@ -1,7 +1,8 @@
 # =============================================================================
-# home/base/gui/desktop-tools.nix — 桌面工具
+# home/base/gui/desktop-tools.nix — 桌面共用工具
 # -----------------------------------------------------------------------------
-# Wayland 桌面环境下的常用工具。
+# Wayland 桌面环境下的常用工具。这里是桌面共用工具的唯一安装处，
+# WM 模块（niri.nix / hyprland.nix）不要再重复安装同一工具。
 # =============================================================================
 { pkgs, ... }:
 {
@@ -20,7 +21,7 @@
 
   home.packages = with pkgs; [
     swaybg # 壁纸设置工具
-    wl-clipboard # 剪贴板
+    wl-clipboard # 剪贴板（Ghostty 及各 WM 共用）
     brightnessctl # 亮度控制
     hyprpicker # 取色器
 
@@ -28,13 +29,9 @@
     alsa-utils # amixer/alsamixer
     networkmanagerapplet # nm-connection-editor GUI
 
-    # 截图工具
+    # 截图工具（niri/hyprland 快捷键共用）
     grim # Wayland 截图
     slurp # 区域选择
-
-    # 远程桌面
-    remmina # RDP/VNC 客户端
-    freerdp # RDP 库
   ];
 
   # ---------------------------------------------------------------------------
