@@ -15,7 +15,7 @@
 | **终端** | Ghostty（GPU 加速） | 无 |
 | **输入法** | fcitx5 + rime | 无 |
 | **主题** | Catppuccin Macchiato | — |
-| **容器** | 无（QEMU/KVM 虚拟化可用） | 无 |
+| **容器** | 无 | 无 |
 | **网络** | NetworkManager | NetworkManager |
 | **登录管理** | greetd + tuigreet（会话菜单切换合成器） | SSH |
 
