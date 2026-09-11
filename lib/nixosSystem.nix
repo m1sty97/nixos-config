@@ -5,7 +5,6 @@
 # 参考 ryan4yin/nix-config 的设计，简化后用于个人配置。
 # =============================================================================
 {
-  inputs,
   lib,
   system,
   genSpecialArgs,
@@ -16,7 +15,7 @@
   ...
 }:
 let
-  inherit (inputs) nixpkgs home-manager;
+  inherit (specialArgs) nixpkgs home-manager;
 in
 nixpkgs.lib.nixosSystem {
   inherit system specialArgs;

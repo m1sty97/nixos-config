@@ -3,15 +3,18 @@
 # -----------------------------------------------------------------------------
 # 将所有 NixOS 主机配置组装为 flake 的 nixosConfigurations 输出。
 # 这是 flake.nix 的 outputs 函数委托的入口。
+#
+# flake.nix 中 outputs = inputs: import ./outputs inputs;
+# 传入的 inputs 是一个包含 self/nixpkgs/home-manager 等所有 flake input 的属性集。
+# 此处用 @inputs' 绑定整个属性集，同时解构需要的个别键。
 # =============================================================================
 {
   self,
   nixpkgs,
-  inputs,
   ...
 }@inputs':
 let
-  inherit (inputs.nixpkgs) lib;
+  inherit (inputs'.nixpkgs) lib;
 
   # ---------------------------------------------------------------------------
   # mylib — 自定义辅助函数库
@@ -34,8 +37,12 @@ let
     // {
       inherit mylib myvars;
 
+      # 将完整的 flake inputs 属性集传入，供模块中引用
+      # 如 inputs.hyprland.nixosModules.default、inputs.sops-nix.nixosModules.sops
+      inputs = inputs';
+
       # 稳定版 nixpkgs 实例（用于需要稳定性的包）
-      pkgs-stable = import inputs.nixpkgs-stable {
+      pkgs-stable = import inputs'.nixpkgs-stable {
         inherit system;
         config.allowUnfree = true;
       };
@@ -57,7 +64,7 @@ in
     # 部署命令：sudo nixos-rebuild switch --flake .#misty-desktop
     # =========================================================================
     misty-desktop = mylib.nixosSystem {
-      inherit system myvars genSpecialArgs;
+      inherit lib system myvars genSpecialArgs;
 
       # NixOS 系统级模块
       nixos-modules = [
@@ -80,7 +87,7 @@ in
     # 部署命令：sudo nixos-rebuild switch --flake .#misty-hyprland
     # =========================================================================
     misty-hyprland = mylib.nixosSystem {
-      inherit system myvars genSpecialArgs;
+      inherit lib system myvars genSpecialArgs;
 
       # NixOS 系统级模块
       nixos-modules = [
@@ -104,7 +111,7 @@ in
     # 部署命令：sudo nixos-rebuild switch --flake .#misty-server
     # =========================================================================
     misty-server = mylib.nixosSystem {
-      inherit system myvars genSpecialArgs;
+      inherit lib system myvars genSpecialArgs;
 
       # NixOS 系统级模块
       nixos-modules = [
