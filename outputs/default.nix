@@ -59,8 +59,8 @@ in
   # ---------------------------------------------------------------------------
   nixosConfigurations = {
     # =========================================================================
-    # 桌面主机 — misty-desktop（Niri 分支）
-    # Niri + Noctalia Shell 日常使用桌面
+    # 桌面主机 — misty-desktop
+    # 同时安装 Niri 与 Hyprland，登录时通过 tuigreet 选择会话切换
     # 部署命令：sudo nixos-rebuild switch --flake .#misty-desktop
     # =========================================================================
     misty-desktop = mylib.nixosSystem {
@@ -68,40 +68,18 @@ in
 
       # NixOS 系统级模块
       nixos-modules = [
-        # 桌面环境入口（自动导入 base + desktop 模块）
+        # 桌面环境入口（自动导入 base + desktop 模块，含 greetd 登录管理器）
         ../modules/nixos/desktop.nix
+        # Hyprland 系统级模块（启用与否由主机配置中的选项控制）
+        ../modules/nixos/hyprland.nix
         # 主机特定配置
         ../hosts/misty-desktop
       ];
 
       # home-manager 用户级模块
       home-modules = [
-        # 桌面主机的完整 GUI 用户配置
+        # 桌面主机的完整 GUI 用户配置（Niri + Hyprland + Noctalia）
         ../home/hosts/linux/misty-desktop.nix
-      ];
-    };
-
-    # =========================================================================
-    # 桌面主机 — misty-hyprland（Hyprland 分支）
-    # Hyprland + Noctalia Shell 桌面
-    # 部署命令：sudo nixos-rebuild switch --flake .#misty-hyprland
-    # =========================================================================
-    misty-hyprland = mylib.nixosSystem {
-      inherit lib system myvars genSpecialArgs;
-
-      # NixOS 系统级模块
-      nixos-modules = [
-        # 桌面环境入口（自动导入 base + desktop 模块）
-        ../modules/nixos/desktop.nix
-        # Hyprland 系统级模块
-        ../modules/nixos/hyprland.nix
-        # 主机特定配置
-        ../hosts/misty-hyprland
-      ];
-
-      # home-manager 用户级模块
-      home-modules = [
-        ../home/hosts/linux/misty-hyprland.nix
       ];
     };
 

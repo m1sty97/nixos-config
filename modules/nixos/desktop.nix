@@ -47,9 +47,10 @@ in
             default_session = {
               # 使用默认用户自动登录（可按需关闭）
               user = myvars.username;
-              # tuigreet 启动 Wayland 会话
-              # .wayland-session 由 home-manager 生成，链接到当前 Wayland 合成器
-              command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd $HOME/.wayland-session";
+              # 不带 --cmd 时 tuigreet 列出 /usr/share/wayland-sessions
+              # 下的全部会话（niri / Hyprland），--remember-session 记住上次
+              # 选择，实现登录时随时在多个合成器之间切换
+              command = "${pkgs.tuigreet}/bin/tuigreet --time --remember --remember-session";
             };
           };
         };

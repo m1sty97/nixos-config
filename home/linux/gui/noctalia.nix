@@ -6,7 +6,7 @@
 #
 # Noctalia 原生支持 Niri 和 Hyprland 的工作区集成，
 # 通过 ext-workspace-v1 协议或 compositor-native backend 实现工作区指示器。
-# 两个桌面分支（misty-desktop / misty-hyprland）统一使用 Noctalia 作为桌面 shell。
+# 桌面主机（misty-desktop）的两个合成器统一使用 Noctalia 作为桌面 shell。
 #
 # 配置格式：TOML（通过 home-manager 的 programs.noctalia.settings 以 Nix attrset 写入）
 # 配置参考：https://docs.noctalia.dev/noctalia/configuration/

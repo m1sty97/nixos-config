@@ -2,9 +2,8 @@
 # flake.nix — 个人 NixOS 配置入口
 # -----------------------------------------------------------------------------
 # 本 flake 管理以下主机：
-#   1. misty-desktop  — 日常使用桌面主机（Niri + Noctalia Shell）
-#   2. misty-hyprland — Hyprland 桌面主机（Hyprland + Noctalia Shell）
-#   3. misty-server   — 服务器主机（运行在虚拟化环境中，提供基础服务工具）
+#   1. misty-desktop  — 日常使用桌面主机（Niri / Hyprland 可切换 + Noctalia Shell）
+#   2. misty-server   — 服务器主机（运行在虚拟化环境中，提供基础服务工具）
 #
 # 所有输出在 outputs/default.nix 中组装，模块化设计便于按需增删应用。
 # =============================================================================

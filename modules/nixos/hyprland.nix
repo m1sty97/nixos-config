@@ -2,14 +2,13 @@
 # modules/nixos/hyprland.nix — Hyprland 系统级模块
 # -----------------------------------------------------------------------------
 # 启用 Hyprland Wayland 合成器，配置系统级依赖。
-# Hyprland 分支主机在 outputs 中引用此模块。
+# 由 misty-desktop 主机引用，与 Niri 共存；
+# 登录时通过 greetd/tuigreet 的会话菜单选择进入哪个合成器。
 # =============================================================================
 {
-  pkgs,
   config,
   lib,
   inputs,
-  myvars,
   ...
 }:
 with lib;
@@ -38,22 +37,8 @@ in
       ####################################################################
 
       # 启用 Hyprland（通过 hyprland flake 的 NixOS 模块）
+      # 登录管理器（greetd）与 Xorg 开关由 desktop.nix 统一配置，此处不重复
       programs.hyprland.enable = true;
-
-      # 禁用 Xorg
-      services.xserver.enable = false;
-
-      # greetd 登录管理器
-      services.greetd = {
-        enable = true;
-        settings = {
-          default_session = {
-            user = myvars.username;
-            # 使用 tuigreet 启动 Hyprland 会话
-            command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd $HOME/.wayland-session";
-          };
-        };
-      };
 
       # Hyprland 需要 polkit
       security.pam.services.hyprlock = { };

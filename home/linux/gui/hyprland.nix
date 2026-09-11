@@ -4,7 +4,7 @@
 # Hyprland 是一个动态平铺 Wayland 合成器。
 # 参考：https://wiki.hyprland.org/
 #
-# 桌面 Shell 统一使用 Noctalia（与 Niri 分支一致），原生支持 Hyprland。
+# 桌面 Shell 统一使用 Noctalia（与 Niri 共用），原生支持 Hyprland。
 # Hyprland 配置通过 xdg.configFile 写入 ~/.config/hypr/hyprland.conf，
 # 在配置中 spawn-at-startup 启动 Noctalia。
 # =============================================================================
