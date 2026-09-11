@@ -1,7 +1,7 @@
 # AGENTS.md — 项目 Agent 工作指南
 
-本仓库是个人 NixOS 配置（Flakes + home-manager），管理三台主机：
-`misty-desktop`（Niri + Noctalia）、`misty-hyprland`（Hyprland + Noctalia）、
+本仓库是个人 NixOS 配置（Flakes + home-manager），管理两台主机：
+`misty-desktop`（Niri / Hyprland 双合成器桌面 + Noctalia，登录时可切换）、
 `misty-server`（虚拟化环境中的服务器）。所有 Agent 在本仓库中工作前，**必须**阅读并遵守本文档。
 
 ---
@@ -80,15 +80,17 @@
   `default.nix` 的 `imports` 列表（`default.nix` 只包含 `imports = mylib.scanPaths ./.;`）。
 - **跨平台复用**：`home/base/` 下的配置对所有平台生效，`home/linux/` 仅 Linux 生效。
   桌面专属配置放 `home/base/gui/` 或 `home/linux/gui/`，服务器仅 CLI 配置放 `home/linux/base/`。
-- **WM 条件控制**：`niri.nix` 和 `hyprland.nix` 使用 `mkEnableOption + mkIf`，
-  通过各自主机的 `home/hosts/linux/<主机名>.nix` 启用，互不干扰。新增 WM 分支遵循同样模式。
+- **WM 显式导入 + 条件启用**：`home/linux/gui/default.nix` 只导入共用的 GUI 配置
+  （noctalia、fcitx5）；WM 模块（`niri.nix`、`hyprland.nix`）由桌面主机的
+  `home/hosts/linux/misty-desktop.nix` 显式导入。两者均使用 `mkEnableOption + mkIf`，
+  可同时启用（登录时通过 tuigreet 会话菜单切换），也可只启用其一。新增 WM 遵循同样模式。
 
 ### 2.4 配置文件链接方式
 
 - Niri 的 KDL 配置通过 `xdg.configFile` + `mkOutOfStoreSymlink` 链接到 `~/.config/niri/`，
   使配置修改无需重新部署即可生效。链接源路径基于 `config.home.homeDirectory`，不要硬编码绝对路径。
 - Hyprland 配置通过 `xdg.configFile` 内联写入 `~/.config/hypr/hyprland.conf`，无需外部 dotfiles 仓库。
-- 两个桌面分支统一使用 Noctalia 作为桌面 shell，通过 `home/linux/gui/noctalia.nix` 统一配置。
+- 桌面主机的两个合成器统一使用 Noctalia 作为桌面 shell，通过 `home/linux/gui/noctalia.nix` 统一配置。
 
 ### 2.5 Git 提交规范
 
@@ -100,7 +102,7 @@
   - `refactor:` — 重构（不改变行为）
   - `docs:` — 文档变更
   - `chore:` — 杂项（格式化、依赖更新等）
-  - `server:` / `desktop:` / `hyprland:` / `niri:` — 按主机/分支限定
+  - `server:` / `desktop:` / `hyprland:` / `niri:` — 按主机/合成器限定
 - 提交 message 正文（如有）使用中文，每行不超过 72 字符。
 - **一个提交只做一件事**。不要在同一个提交中混合功能新增和代码重构。
 - **提交前必须 `git add -A` 并 `git status --short` 检查**，确认没有遗漏或多余文件。
@@ -178,7 +180,7 @@ nixos-config/
 ├── flake.nix              # 入口：定义 inputs（含 sops-nix）
 ├── flake.lock             # 依赖锁定文件（有意提交到版本控制）
 ├── .sops.yaml             # sops 加密配置（age 公钥）
-├── outputs/default.nix    # 组装 nixosConfigurations（3 台主机）
+├── outputs/default.nix    # 组装 nixosConfigurations（2 台主机）
 ├── lib/                   # mylib：scanPaths / nixosSystem
 ├── vars/                  # myvars：用户名 / 网络 / SSH（非敏感）
 ├── secrets/               # sops 加密密钥文件
@@ -193,19 +195,17 @@ nixos-config/
 ├── home/                  # home-manager 用户级
 │   ├── base/core/         #   核心配置（zsh/starship/vim/helix/git/tools）
 │   ├── base/gui/          #   GUI 配置（ghostty/firefox/media/gtk）
-│   ├── linux/gui/         #   WM 配置（niri/noctalia/hyprland/fcitx5）
+│   ├── linux/gui/         #   GUI 配置（noctalia/fcitx5 共用 + niri/hyprland WM 模块）
 │   └── hosts/linux/       #   主机专属 home 入口
 └── hosts/                 # 主机系统级配置（每台含 disko.nix 磁盘布局）
-    ├── misty-desktop/     #   Niri 桌面
-    ├── misty-hyprland/    #   Hyprland 桌面
+    ├── misty-desktop/     #   双合成器桌面（Niri / Hyprland）
     └── misty-server/      #   服务器
 ```
 
 ## 5. 部署命令速查
 
 ```bash
-sudo nixos-rebuild switch --flake .#misty-desktop    # Niri 桌面
-sudo nixos-rebuild switch --flake .#misty-hyprland  # Hyprland 桌面
+sudo nixos-rebuild switch --flake .#misty-desktop    # 桌面（Niri / Hyprland 登录时切换）
 sudo nixos-rebuild switch --flake .#misty-server    # 服务器
 nix flake update                                     # 更新所有 inputs
 nix fmt                                              # 格式化 Nix 代码

@@ -1,29 +1,28 @@
 # ❄️ Misty 的 NixOS 配置
 
 > 个人 NixOS 配置，基于 Flakes + home-manager，模块化设计。
-> 包含 Niri 和 Hyprland 两个桌面配置分支，以及一个服务器主机配置。
+> 桌面主机同时安装 Niri 与 Hyprland（登录时可切换），外加一个服务器主机配置。
 
 ## 📋 组件概览
 
-| 组件 | Niri 桌面 | Hyprland 桌面 | 服务器主机 |
-|------|----------|---------------|------------|
-| **窗口管理器** | [Niri](https://github.com/YaLTeR/niri)（scrollable-tiling） | [Hyprland](https://hyprland.org/)（dynamic tiling） | 无 |
-| **桌面 Shell** | [Noctalia](https://github.com/noctalia-dev/noctalia)（原生 Wayland） | Noctalia（与 Niri 分支统一） | 无 |
-| **Shell** | zsh + starship | zsh + starship | zsh + starship |
-| **编辑器** | vim（主）+ helix（备用） | vim + helix | vim |
-| **终端** | Ghostty（GPU 加速） | Ghostty | 无 |
-| **输入法** | fcitx5 + rime | fcitx5 + rime | 无 |
-| **主题** | Catppuccin Macchiato | Catppuccin / Material You | — |
-| **容器** | Podman + Flatpak | Podman + Flatpak | Podman |
-| **网络** | NetworkManager | NetworkManager | systemd-networkd（静态 IP） |
-| **登录管理** | greetd + tuigreet | greetd + tuigreet | SSH |
+| 组件 | 桌面主机 | 服务器主机 |
+|------|----------|------------|
+| **窗口管理器** | [Niri](https://github.com/YaLTeR/niri)（scrollable-tiling）+ [Hyprland](https://hyprland.org/)（dynamic tiling），登录时切换 | 无 |
+| **桌面 Shell** | [Noctalia](https://github.com/noctalia-dev/noctalia)（原生 Wayland，两个合成器共用） | 无 |
+| **Shell** | zsh + starship | zsh + starship |
+| **编辑器** | vim（主）+ helix（备用） | vim |
+| **终端** | Ghostty（GPU 加速） | 无 |
+| **输入法** | fcitx5 + rime | 无 |
+| **主题** | Catppuccin Macchiato | — |
+| **容器** | Podman + Flatpak | Podman |
+| **网络** | NetworkManager | NetworkManager |
+| **登录管理** | greetd + tuigreet（会话菜单切换合成器） | SSH |
 
-### 三个主机配置
+### 两个主机配置
 
 | 主机名 | Flake 输出 | 说明 |
 |--------|-----------|------|
-| `misty-desktop` | `.#misty-desktop` | Niri + Noctalia 日常桌面 |
-| `misty-hyprland` | `.#misty-hyprland` | Hyprland + Noctalia 桌面 |
+| `misty-desktop` | `.#misty-desktop` | Niri / Hyprland 双合成器日常桌面 |
 | `misty-server` | `.#misty-server` | 运行在虚拟化环境中的服务器 |
 
 ## 📁 目录结构
@@ -56,25 +55,23 @@ nixos-config/
 │   │       ├── browsers.nix     #       Firefox + Chrome
 │   │       └── media.nix        #       mpv/pavucontrol/imv
 │   ├── linux/gui/
-│   │   ├── niri.nix             #       Niri WM（条件启用）
+│   │   ├── niri.nix             #       Niri WM（mkIf 条件启用）
 │   │   ├── niri/conf/           #       Niri KDL 配置文件
-│   │   ├── noctalia.nix         #       Noctalia Shell（Niri 分支）
-│   │   ├── hyprland.nix         #       Hyprland WM（条件启用）
+│   │   ├── noctalia.nix         #       Noctalia Shell（两个合成器共用）
+│   │   ├── hyprland.nix         #       Hyprland WM（mkIf 条件启用）
 │   │   └── fcitx5.nix           #       中文输入法
 │   └── hosts/linux/             #   主机专属 home 入口
-│       ├── misty-desktop.nix    #     Niri 桌面（启用 niri）
-│       ├── misty-hyprland.nix   #     Hyprland 桌面（启用 hyprland）
+│       ├── misty-desktop.nix    #     双合成器桌面（显式导入并启用 niri + hyprland）
 │       └── misty-server.nix     #     服务器（仅 CLI）
 │
 ├── hosts/                       # 主机系统级配置
-│   ├── misty-desktop/           #   Niri 桌面
+│   ├── misty-desktop/           #   双合成器桌面
 │   │   ├── disko.nix            #     磁盘分区声明（disko）
 │   │   └── hardware-configuration.nix  # 内核模块等硬件相关配置
-│   ├── misty-hyprland/          #   Hyprland 桌面
 │   └── misty-server/            #   服务器（disko.nix + qemu-guest）
 │
 └── outputs/
-    └── default.nix              # 组装 3 个 nixosConfigurations
+    └── default.nix              # 组装 2 个 nixosConfigurations
 ```
 
 ## 🚀 快速开始
@@ -119,11 +116,8 @@ reboot
 ```bash
 cd ~/nixos-config
 
-# Niri 桌面
+# 桌面主机（Niri / Hyprland 双合成器）
 sudo nixos-rebuild switch --flake .#misty-desktop
-
-# Hyprland 桌面
-sudo nixos-rebuild switch --flake .#misty-hyprland
 
 # 服务器
 sudo nixos-rebuild switch --flake .#misty-server
@@ -173,13 +167,14 @@ nix develop                         # 进入开发环境
 - 运行时也可通过 Noctalia 的设置 GUI 修改
 - IPC 控制：`noctalia msg --help`
 - 原生支持 Niri 和 Hyprland 工作区集成（通过 ext-workspace-v1 协议或 compositor-native backend）
-- 两个桌面分支统一使用 Noctalia，配置一致，便于管理
+- 两个合成器共用 Noctalia，配置一致，便于管理
 
-## 🖥️ Hyprland 分支配置
+## 🖥️ Hyprland 配置
 
 - 配置文件：`home/linux/gui/hyprland.nix`（通过 `xdg.configFile` 写入 `~/.config/hypr/hyprland.conf`）
-- 桌面 Shell：Noctalia（与 Niri 分支统一，`exec-once = noctalia` 启动）
+- 桌面 Shell：Noctalia（与 Niri 共用，`exec-once = noctalia` 启动）
 - 自定义修改：编辑 `home/linux/gui/hyprland.nix` 中的 `xdg.configFile."hypr/hyprland.conf".text`
+- 会话切换：登录界面（tuigreet）按 F3 或方向键选择 niri / Hyprland 会话
 
 ## 🔧 如何增删应用
 
@@ -195,17 +190,24 @@ nix develop                         # 进入开发环境
 }
 ```
 
-文件会被 `scanPaths` 自动导入，无需修改 `default.nix`。
+文件会被 `scanPaths` 自动导入，无需修改 `default.nix`（注意：`home/linux/gui/`
+下的 WM 模块为例外，由主机入口显式导入）。
 
-### 仅在特定 WM 分支安装
+### 启用/停用某个合成器
 
-在 `home/hosts/linux/misty-desktop.nix` 或 `misty-hyprland.nix` 中添加：
+桌面主机同时安装 Niri 与 Hyprland，登录时通过 tuigreet 会话菜单随时切换。
+如需从构建中裁剪某个合成器，在 `home/hosts/linux/misty-desktop.nix` 中调整：
 
 ```nix
 { pkgs, ... }:
 {
-  imports = [ ../../linux/gui.nix ];
-  modules.desktop.niri.enable = true;  # 或 hyprland
+  imports = [
+    ../../linux/gui.nix
+    ../../linux/gui/niri.nix     # WM 模块显式导入
+    ../../linux/gui/hyprland.nix
+  ];
+  modules.desktop.niri.enable = true;     # 停用 Niri 时改为 false
+  modules.desktop.hyprland.enable = true; # 停用 Hyprland 时改为 false
 
   home.packages = with pkgs; [ steam ];
 }
@@ -221,7 +223,7 @@ nix develop                         # 进入开发环境
      - 方式二（快速试用）：直接修改 `vars/default.nix` 中的 `initialHashedPassword` 和 `mainSshAuthorizedKeys`
 
 2. **桌面 Shell 统一为 Noctalia**：
-   - Niri 和 Hyprland 分支均使用 Noctalia 作为桌面 shell
+   - Niri 与 Hyprland 均使用 Noctalia 作为桌面 shell
    - Noctalia 原生支持 Niri 和 Hyprland 的工作区集成
    - Hyprland 配置通过 `home/linux/gui/hyprland.nix` 内联生成（`hyprland.conf`），无需外部 dotfiles 仓库
 
