@@ -61,4 +61,11 @@
 
   # 确保 zsh 在 /etc/shells 中
   programs.zsh.enable = true;
+
+  # ---------------------------------------------------------------------------
+  # 锁定 root 密码登录（"!" 为 shadow 锁定标记）
+  # 物理控制台无法无密码进入 root；提权走 sudo，远程走 misty + SSH 密钥。
+  # sshd 侧由 PermitRootLogin = "prohibit-password" 双重限制（见 ssh.nix）。
+  # ---------------------------------------------------------------------------
+  users.users.root.hashedPassword = lib.mkDefault "!";
 }
