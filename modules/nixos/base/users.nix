@@ -22,7 +22,7 @@
     # 优先从 sops 解密文件读取（/run/secrets/misty/hashed_password）
     # 如果 sops 未配置或密钥不存在，回退到 vars 中的占位哈希
     # ---------------------------------------------------------------------------
-    hashedPasswordFile = lib.mkIf config.sops.secrets ? "misty/hashed_password" (
+    hashedPasswordFile = lib.mkIf (config.sops.secrets ? "misty/hashed_password") (
       config.sops.secrets."misty/hashed_password".path
     );
 
