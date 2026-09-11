@@ -9,6 +9,6 @@
     inherit (myvars) username;
 
     # Home Manager 状态版本（不要随意修改）
-    stateVersion = "25.05";
+    stateVersion = "26.05";
   };
 }
