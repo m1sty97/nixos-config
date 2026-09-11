@@ -2,7 +2,7 @@
 # hosts/misty-server/disko.nix — 磁盘分区声明（disko）
 # -----------------------------------------------------------------------------
 # 由 disko 声明式管理服务器虚拟机的磁盘布局：
-#   GPT：ESP(512M, 挂载 /boot) + swap(4G) + 根分区(其余空间, 挂载 /)
+#   GPT：ESP(512M, 挂载 /boot) + swap(4G) + btrfs(其余空间, 子卷 @/@home/@nix)
 # 服务器以 UEFI + GRUB2 引导（与桌面主机一致，见 base/core.nix），
 # 因此需要 EF00 类型的 EFI 系统分区挂载为 /boot。
 #
@@ -42,13 +42,18 @@ in
           content.type = "swap";
         };
 
-        # 根分区（ext4）
+        # btrfs 根分区，按子卷划分系统/用户数据/nix 存储（与桌面主机布局一致）
         root = {
           size = "100%";
           content = {
-            type = "filesystem";
-            format = "ext4";
-            mountpoint = "/";
+            type = "btrfs";
+            # 覆盖磁盘上已有的 btrfs 签名
+            extraArgs = [ "-f" ];
+            subvolumes = {
+              "/@" = { mountpoint = "/"; };
+              "/@home" = { mountpoint = "/home"; };
+              "/@nix" = { mountpoint = "/nix"; };
+            };
           };
         };
       };
