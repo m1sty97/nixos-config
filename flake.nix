@@ -28,10 +28,10 @@
   # ---------------------------------------------------------------------------
   inputs = {
     # 官方 NixOS 包源，默认使用 unstable 分支
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "git+https://mirror.nju.edu.cn/git/nixpkgs.git?ref=nixos-unstable&shallow=1";
 
     # 稳定分支，用于需要稳定性的包
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-25.05";
+    nixpkgs-stable.url = "git+https://mirror.nju.edu.cn/git/nixpkgs.git?ref=nixos-26.05&shallow=1";
 
     # home-manager — 用户环境管理，与 NixOS 配合管理用户级配置
     home-manager = {
