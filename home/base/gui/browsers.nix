@@ -8,17 +8,11 @@
 {
   # ---------------------------------------------------------------------------
   # Google Chrome — 主力浏览器
+  # 去广告扩展（uBlock Origin Lite）通过 Chrome 系统策略强装，
+  # 见 modules/nixos/desktop/chrome-policies.nix
+  # （HM 无法管理 Linux 上 Chrome 的扩展，会触发断言）
   # ---------------------------------------------------------------------------
-  programs.google-chrome = {
-    enable = true;
-
-    # 扩展程序（按 Chrome 应用商店 ID 安装）
-    # uBlock Origin Lite —— Chrome 已下架 MV2 的原版 uBlock Origin，
-    # MV3 环境使用 Lite 版去广告
-    extensions = [
-      { id = "ddbahbpljcahncdlkdaljbgleeagekfc"; } # uBlock Origin Lite
-    ];
-  };
+  programs.google-chrome.enable = true;
 
   # ---------------------------------------------------------------------------
   # Firefox — 备用浏览器
