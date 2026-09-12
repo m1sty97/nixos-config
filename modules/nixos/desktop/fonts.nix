@@ -18,6 +18,7 @@
       source-serif-4 # 衬线
       source-sans-3 # 无衬线
       jetbrains-mono # 等宽
+      nerd-fonts.jetbrains-mono # 等宽（Nerd Font 图标版，终端与 starship 使用）
 
       # 中文字体
       source-han-sans # 思源黑体（无衬线）
