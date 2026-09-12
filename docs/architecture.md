@@ -86,4 +86,4 @@ graph TB
 2. **双合成器共存**：`misty-desktop` 同时安装 Niri 与 Hyprland，`modules.desktop.{niri,hyprland}.enable` 互独立，登录时通过 tuigreet 会话菜单切换，无需 rebuild。
 3. **WM 模块显式导入**：`home/linux/gui/default.nix` 只装共用配置（Noctalia/fcitx5），WM 模块由主机 home 入口显式导入——新增 WM 遵循同一模式。
 4. **磁盘声明式管理**：每台主机的分区布局由 `disko.nix` 定义（UEFI + GRUB2 引导，btrfs 子卷统一为 @/@home/@nix），`hardware-configuration.nix` 只保留内核模块。
-5. **密钥全部走 sops-nix**：密码哈希在用户创建前解密（`neededForUsers`），SSH 公钥由 sshd 运行时读取（`authorizedKeys.files`）；root 密码已锁定，提权仅走 sudo。
+5. **密钥全部走 sops-nix**：密码哈希在用户创建前解密（`neededForUsers`），SSH 公钥由 sshd 认证时读取（`AuthorizedKeysFile`）；root 密码已锁定，提权仅走 sudo。

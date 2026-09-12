@@ -19,7 +19,7 @@
   # ---------------------------------------------------------------------------
   # SSH 公钥列表 — 可登录所有主机的可信公钥（回退配置）
   # 正式方案：公钥由 sops-nix 从 secrets/secrets.yaml 解密提供
-  # （见 modules/nixos/base/sops.nix 与 users.nix 的 authorizedKeys.files）
+  # （sshd 认证时经 ssh.nix 的 AuthorizedKeysFile 读取）
   # ---------------------------------------------------------------------------
   mainSshAuthorizedKeys = [
     # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... misty@desktop"
