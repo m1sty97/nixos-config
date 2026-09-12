@@ -71,16 +71,5 @@ in
       };
     };
 
-    # ---------------------------------------------------------------------------
-    # Wayland 会话启动脚本
-    # ---------------------------------------------------------------------------
-    home.file.".wayland-session" = {
-      source = pkgs.writeScript "init-session" ''
-        #!/bin/sh
-        systemctl --user is-active niri.service && systemctl --user stop niri.service
-        exec /run/current-system/sw/bin/niri-session
-      '';
-      executable = true;
-    };
   };
 }
