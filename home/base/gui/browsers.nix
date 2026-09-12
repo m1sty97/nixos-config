@@ -11,6 +11,13 @@
   # ---------------------------------------------------------------------------
   programs.google-chrome = {
     enable = true;
+
+    # 扩展程序（按 Chrome 应用商店 ID 安装）
+    # uBlock Origin Lite —— Chrome 已下架 MV2 的原版 uBlock Origin，
+    # MV3 环境使用 Lite 版去广告
+    extensions = [
+      { id = "ddbahbpljcahncdlkdaljbgleeagekfc"; } # uBlock Origin Lite
+    ];
   };
 
   # ---------------------------------------------------------------------------
