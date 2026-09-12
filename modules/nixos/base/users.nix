@@ -18,29 +18,18 @@
     description = myvars.userfullname;
 
     # ---------------------------------------------------------------------------
-    # 用户密码哈希
-    # 优先从 sops 解密文件读取（/run/secrets/misty/hashed_password）
-    # 如果 sops 未配置或密钥不存在，回退到 vars 中的占位哈希
+    # 用户密码哈希 — 从 sops 解密文件读取（/run/secrets/misty/hashed_password）
     # ---------------------------------------------------------------------------
-    hashedPasswordFile = lib.mkIf (config.sops.secrets ? "misty/hashed_password") (
-      config.sops.secrets."misty/hashed_password".path
-    );
-
-    # sops 未启用时的回退方案（占位符，首次使用请替换或启用 sops）
-    initialHashedPassword = lib.mkIf (
-      !config.sops.secrets ? "misty/hashed_password"
-    ) myvars.initialHashedPassword;
+    hashedPasswordFile = config.sops.secrets."misty/hashed_password".path;
 
     # ---------------------------------------------------------------------------
     # 可登录的 SSH 公钥
-    # keys  — vars 中的静态配置（sops 未配置时的回退，当前为空）
-    # files — sops 解密出的公钥文件，由 sshd 运行时读取（实际生效的来源）
+    # keys  — vars 中的静态配置（回退）
+    # files — sops 解密出的公钥文件，由 sshd 运行时读取（实际生效来源）
     # ---------------------------------------------------------------------------
     openssh.authorizedKeys = {
       keys = myvars.mainSshAuthorizedKeys;
-      files = lib.mkIf (config.sops.secrets ? "ssh/authorized_keys") [
-        config.sops.secrets."ssh/authorized_keys".path
-      ];
+      files = [ config.sops.secrets."ssh/authorized_keys".path ];
     };
 
     # 加入以下用户组：

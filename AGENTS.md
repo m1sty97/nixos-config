@@ -118,8 +118,8 @@
   参见 [secrets/README.md](./secrets/README.md)。
 - **age 私钥（`keys.txt`）绝对不能提交到 git**（已在 `.gitignore` 中排除）。
   私钥部署到各主机的 `/var/lib/sops-nix/age/keys.txt`。
-- **明文密码、密码哈希明文不在代码中出现**。`vars/default.nix` 中的
-  `initialHashedPassword` 仅作为 sops 未配置时的回退占位符，生产环境应使用 sops。
+- **明文密码、密码哈希明文不在代码中出现**。用户密码哈希与 SSH 公钥统一由
+  sops-nix 解密提供，`vars/` 中不保留明文回退占位符。
 - 新增敏感配置时，通过 `sops secrets/secrets.yaml` 添加 key，然后在
   `modules/nixos/base/sops.nix` 的 `sops.secrets` 中注册，在需要使用的模块中通过
   `config.sops.secrets."key/path".path` 引用解密后的文件路径。

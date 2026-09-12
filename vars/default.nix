@@ -17,22 +17,9 @@
   gituseremail = "wei251x@gmail.com";
 
   # ---------------------------------------------------------------------------
-  # 初始登录密码的哈希值（回退方案 — 优先使用 sops 管理）
-  # 生成方式：mkpasswd -m yescrypt --rounds 11
-  #
-  # ⚠️ 此哈希仅作为 sops 未配置时的回退占位符。
-  # 生产环境应通过 sops-nix 管理密码哈希（见 secrets/secrets.yaml 和 modules/nixos/base/sops.nix）。
-  # 首次使用请：
-  #   1. 生成 age 密钥对并配置 .sops.yaml
-  #   2. 运行 `sops secrets/secrets.yaml` 填入真实密码哈希
-  #   3. 替换下方占位符或直接删除（sops 启用后不需要）
-  # ---------------------------------------------------------------------------
-  initialHashedPassword = "$y$j9T$placeholderreplacewithyourownhash";
-
-  # ---------------------------------------------------------------------------
-  # SSH 公钥列表 — 可登录所有主机的可信公钥
-  # 生成方式：ssh-keygen -t ed25519 -a 256 -C "misty@hostname" -f ~/.ssh/id_ed25519
-  # 首次使用请替换为你自己的公钥！
+  # SSH 公钥列表 — 可登录所有主机的可信公钥（回退配置）
+  # 正式方案：公钥由 sops-nix 从 secrets/secrets.yaml 解密提供
+  # （见 modules/nixos/base/sops.nix 与 users.nix 的 authorizedKeys.files）
   # ---------------------------------------------------------------------------
   mainSshAuthorizedKeys = [
     # "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... misty@desktop"

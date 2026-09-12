@@ -96,9 +96,9 @@ lsblk
 sudo nix run github:nix-community/disko -- --mode destroy,format,mount hosts/misty-desktop/disko.nix
 
 # 6. 编辑 vars/default.nix，修改：
-#    - initialHashedPassword（用 `mkpasswd -m yescrypt` 生成）
-#    - mainSshAuthorizedKeys（你的 SSH 公钥）
 #    - useremail
+#    - 密码哈希与 SSH 公钥由 sops-nix 管理，
+#      如需修改执行 `sops secrets/secrets.yaml`（见 secrets/README.md）
 
 # 7. 编辑 vars/networking.nix，修改网络配置
 
@@ -219,10 +219,9 @@ nix develop                         # 进入开发环境
 
 1. **首次使用前必须修改**：
    - `vars/default.nix` 中的邮箱、网络配置
-   - `hosts/*/hardware-configuration.nix`（用 `nixos-generate-config` 生成）
-   - **密钥管理**（二选一）：
-     - 方式一（推荐）：配置 sops-nix 管理密码和 SSH 公钥 → 见 [secrets/README.md](./secrets/README.md)
-     - 方式二（快速试用）：直接修改 `vars/default.nix` 中的 `initialHashedPassword` 和 `mainSshAuthorizedKeys`
+   - `hosts/*/disko.nix` 顶部的磁盘设备名（装机前用 `lsblk` 确认）
+   - **密钥管理**：密码哈希与 SSH 公钥统一由 sops-nix 管理，
+     执行 `sops secrets/secrets.yaml` 编辑 → 见 [secrets/README.md](./secrets/README.md)
 
 2. **桌面 Shell 统一为 Noctalia**：
    - Niri 与 Hyprland 均使用 Noctalia 作为桌面 shell
