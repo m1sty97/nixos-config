@@ -17,6 +17,10 @@
   users.users.${myvars.username} = {
     description = myvars.userfullname;
 
+    # 普通登录用户（非系统用户），默认加入 users 组
+    isNormalUser = true;
+    group = "users";
+
     # ---------------------------------------------------------------------------
     # 用户密码哈希 — 从 sops 解密文件读取（/run/secrets/misty/hashed_password）
     # ---------------------------------------------------------------------------
