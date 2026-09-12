@@ -30,7 +30,7 @@
 
 ```
 nixos-config/
-├── flake.nix                    # Flake 入口（nixpkgs/home-manager/catppuccin/noctalia/hyprland/disko）
+├── flake.nix                    # Flake 入口（nixpkgs/home-manager/catppuccin/noctalia/hyprland/disko/sops-nix/nur）
 ├── lib/                         # 辅助函数库（scanPaths / nixosSystem）
 ├── vars/                        # 全局变量（用户名/网络/SSH）
 │

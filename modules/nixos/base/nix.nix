@@ -1,12 +1,19 @@
 # =============================================================================
 # modules/nixos/base/nix.nix — Nix 包管理器配置
 # -----------------------------------------------------------------------------
-# 启用 Flakes、自动垃圾回收、存储优化等。
+# 启用 Flakes、自动垃圾回收、存储优化、NUR overlay 等。
 # =============================================================================
-{ lib, ... }:
+{
+  lib,
+  inputs,
+  ...
+}:
 {
   # 允许安装非自由软件（如 Chrome、VS Code 等）
   nixpkgs.config.allowUnfree = lib.mkForce true;
+
+  # NUR — nix-community 用户包仓库（Firefox 扩展等不在 nixpkgs 的包）
+  nixpkgs.overlays = [ inputs.nur.overlays.default ];
 
   # 每周自动垃圾回收，保留近 7 天的配置
   nix.gc = {
