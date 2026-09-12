@@ -57,11 +57,11 @@
 
   # ---------------------------------------------------------------------------
   # btop — 系统资源监控器
+  # color_theme 由 catppuccin 模块（theme.nix）统一注入，此处不重复设置
   # ---------------------------------------------------------------------------
   programs.btop = {
     enable = true;
     settings = {
-      color_theme = "catppuccin_macchiato";
       theme_background = false;
       vim_keys = true;
     };
