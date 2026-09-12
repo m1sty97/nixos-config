@@ -95,23 +95,30 @@ lsblk
 # 5. 声明式分区、格式化并挂载到 /mnt（磁盘布局由 disko.nix 定义）
 sudo nix run github:nix-community/disko -- --mode destroy,format,mount hosts/misty-desktop/disko.nix
 
-# 6. 编辑 vars/default.nix，修改：
+# 6. 部署 age 私钥到目标系统（sops 解密依赖，密钥生成见 secrets/README.md）
+sudo mkdir -p /mnt/var/lib/sops-nix/age
+sudo cp ~/.config/sops/age/keys.txt /mnt/var/lib/sops-nix/age/keys.txt
+sudo chmod 600 /mnt/var/lib/sops-nix/age/keys.txt
+
+# 7. 编辑 vars/default.nix，修改：
 #    - useremail
 #    - 密码哈希与 SSH 公钥由 sops-nix 管理，
 #      如需修改执行 `sops secrets/secrets.yaml`（见 secrets/README.md）
 
-# 7. 编辑 vars/networking.nix，修改网络配置
+# 8. 编辑 vars/networking.nix，修改网络配置
 
-# 8. 安装 NixOS
+# 9. 安装 NixOS
 sudo nixos-install --flake .#misty-desktop --no-root-password
 
-# 9. 重启
+# 10. 重启
 reboot
 ```
 
 > 磁盘分区布局由 [disko](https://github.com/nix-community/disko) 声明式管理，
 > 装机时不再需要手动 `gdisk`/`mkfs`。`hardware-configuration.nix` 仅保留
-> 内核模块等硬件相关配置。重装系统只需重复步骤 5-8。
+> 内核模块等硬件相关配置。重装系统只需重复步骤 5-9，
+> **注意重装会清空磁盘上的 age 私钥，必须重复步骤 6 重新部署**，
+> 否则首次开机时 sops 无法解密用户密码与 SSH 公钥。
 
 ### 2. 日常部署
 
@@ -133,6 +140,30 @@ nixos-rebuild test --flake .#misty-desktop
 # 远程部署到服务器
 sudo nixos-rebuild switch --flake .#misty-server --target-host misty-server
 ```
+
+> 首次远程部署新主机前，目标主机同样需要部署 age 私钥
+> （`/var/lib/sops-nix/age/keys.txt`），否则 sops 无法解密。
+
+### 3. 密钥管理（sops-nix）
+
+密码哈希、SSH 公钥等敏感信息统一由 [sops-nix](https://github.com/Mic92/sops-nix) 管理，
+完整说明见 [secrets/README.md](./secrets/README.md)，速查如下：
+
+```bash
+# 编辑加密密钥文件（保存时自动加密，可安全提交到 git）
+sops secrets/secrets.yaml
+
+# 解密验证
+sops -d secrets/secrets.yaml
+
+# 部署后检查（各主机上执行）
+ls -la /run/secrets/
+```
+
+- **age 私钥**：部署到各主机 `/var/lib/sops-nix/age/keys.txt`（权限 600），
+  丢失后无法解密，请务必备份；首次安装时的部署方式见上方安装流程步骤 6。
+- **新增密钥三步**：`sops secrets/secrets.yaml` 添加 key →
+  在 `modules/nixos/base/sops.nix` 注册 → 模块中引用解密路径。
 
 ### 4. 常用维护命令
 
