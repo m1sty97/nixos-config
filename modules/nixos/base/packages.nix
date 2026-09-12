@@ -28,5 +28,10 @@
     curl
     git
     vim # 默认编辑器
+
+    # 密钥管理 CLI（编辑 secrets/secrets.yaml、手动加解密）
+    # 注意：这只是命令行工具；激活时的自动解密由 sops-nix 模块负责
+    sops
+    age
   ];
 }
