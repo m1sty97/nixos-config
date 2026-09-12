@@ -20,5 +20,7 @@
     # 求值期构建，与 `nix flake check --no-build` 快速门禁冲突。
     # 如需 Firefox 主题，打开下面一行并改用不带 --no-build 的 check。
     firefox.profiles.default.enable = false;
+    # swaylock 主题同理：转换配置需要求值期 derivation
+    swaylock.enable = false;
   };
 }
