@@ -28,13 +28,11 @@
 
     # ---------------------------------------------------------------------------
     # 可登录的 SSH 公钥
-    # keys  — vars 中的静态配置（回退）
-    # files — sops 解密出的公钥文件，由 sshd 运行时读取（实际生效来源）
+    # keys — vars 中的静态配置（回退）
+    # sops 解密出的公钥文件经 sshd 的 AuthorizedKeysFile 认证时读取
+    # （见 ssh.nix；keyFiles 为构建期读取，无法引用运行时解密路径）
     # ---------------------------------------------------------------------------
-    openssh.authorizedKeys = {
-      keys = myvars.mainSshAuthorizedKeys;
-      keyFiles = [ config.sops.secrets."ssh/authorized_keys".path ];
-    };
+    openssh.authorizedKeys.keys = myvars.mainSshAuthorizedKeys;
 
     # 加入以下用户组：
     # - wheel      — sudo 提权

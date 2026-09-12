@@ -18,6 +18,15 @@
       PermitRootLogin = lib.mkDefault "prohibit-password";
       # 禁止密码登录，仅允许密钥认证
       PasswordAuthentication = false;
+      # 公钥来源：用户 ~/.ssh/authorized_keys、users 模块生成的
+      # /etc/ssh/authorized_keys.d/%u，以及 sops 解密出的公钥文件
+      # （sshd 认证时以 root 读取，因此运行时路径可行）
+      AuthorizedKeysFile = [
+        ".ssh/authorized_keys"
+        ".ssh/authorized_keys2"
+        "/etc/ssh/authorized_keys.d/%u"
+        "/run/secrets/ssh/authorized_keys"
+      ];
     };
     openFirewall = true;
   };
