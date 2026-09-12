@@ -32,7 +32,7 @@
       user.name = myvars.gitusername;
 
       # 初始分支名
-      init.defaultBranch = "main";
+      init.defaultBranch = "master";
 
       # 推送时自动设置上游
       push.autoSetupRemote = true;
