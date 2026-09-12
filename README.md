@@ -87,42 +87,52 @@ nixos-config/
 git clone <你的仓库地址> ~/nixos-config
 cd ~/nixos-config
 
-# 3. ISO 环境默认未启用 Flakes，先临时开启（仅当前 shell 有效，
-#    装好的系统配置中已永久启用，无需重复）
+# 3. 放置 age 私钥（sops 解密依赖，生成方式见 secrets/README.md）
+mkdir -p ~/.config/sops/age
+#    将私钥文件保存为 ~/.config/sops/age/keys.txt
+
+# 4. 修改 hosts/misty-server/disko.nix 顶部的 diskDevice 为实际磁盘设备
+
+# 5. 一键安装（脚本自动启用 Flakes、执行 disko 清盘分区、
+#    部署 age 私钥并运行 nixos-install；清盘前有二次确认）
+sudo ./install.sh misty-server
+
+# 6. 重启
+reboot
+```
+
+> - 脚本会**清空** `hosts/<主机名>/disko.nix` 中 diskDevice 指向的磁盘，
+>   执行前请先 `lsblk` 确认设备名。
+> - 重装只需重复步骤 2-5，age 私钥由脚本自动重新部署。
+> - 重启后请立即修改 misty 密码（历史哈希曾在仓库中暴露）。
+
+#### 手动安装（备用/排查用）
+
+```bash
+cd ~/nixos-config
+
+# ISO 环境默认未启用 Flakes，先临时开启
 export NIX_CONFIG="experimental-features = nix-command flakes"
 
-# 4. 确认目标磁盘设备名（⚠️ 下一步会清空该磁盘上的全部数据！）
+# 确认磁盘设备名（⚠️ disko 会清空该磁盘）
 lsblk
 
-# 5. 修改 hosts/misty-server/disko.nix 顶部的 diskDevice 为实际磁盘设备
+# 修改 hosts/misty-server/disko.nix 顶部的 diskDevice 后执行：
+sudo nix run .#disko -- --mode destroy,format,mount hosts/misty-server/disko.nix
 
-# 6. 声明式分区、格式化并挂载到 /mnt（磁盘布局由 disko.nix 定义）
-sudo nix run github:nix-community/disko -- --mode destroy,format,mount hosts/misty-server/disko.nix
-
-# 7. 部署 age 私钥到目标系统（sops 解密依赖，密钥生成见 secrets/README.md）
+# 部署 age 私钥到目标系统（sops 解密依赖）
 sudo mkdir -p /mnt/var/lib/sops-nix/age
 sudo cp ~/.config/sops/age/keys.txt /mnt/var/lib/sops-nix/age/keys.txt
 sudo chmod 600 /mnt/var/lib/sops-nix/age/keys.txt
 
-# 8. 编辑 vars/default.nix，修改：
-#    - useremail
-#    - 密码哈希与 SSH 公钥由 sops-nix 管理，
-#      如需修改执行 `sops secrets/secrets.yaml`（见 secrets/README.md）
+# 编辑 vars/default.nix（useremail）与 vars/networking.nix（网络）
 
-# 9. 编辑 vars/networking.nix，修改网络配置
-
-# 10. 安装 NixOS
+# 安装 NixOS
 sudo nixos-install --flake .#misty-server --no-root-password
 
-# 11. 重启
+# 重启
 reboot
 ```
-
-> 磁盘分区布局由 [disko](https://github.com/nix-community/disko) 声明式管理，
-> 装机时不再需要手动 `gdisk`/`mkfs`。`hardware-configuration.nix` 仅保留
-> 内核模块等硬件相关配置。重装系统只需重复步骤 4-10，
-> **注意重装会清空磁盘上的 age 私钥，必须重复步骤 7 重新部署**，
-> 否则首次开机时 sops 无法解密用户密码与 SSH 公钥。
 
 ### 2. 日常部署
 

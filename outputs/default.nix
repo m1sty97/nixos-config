@@ -123,8 +123,24 @@ in
       sops
       # age 加密工具（sops 的默认加密后端）
       age
+      # 分区工具（装机/救援用）
+      disko
     ];
     name = "nixos-config-dev";
+
+    # ISO/救援环境中临时启用 Flakes（sudo 之外的环境用）
+    shellHook = ''
+      export NIX_CONFIG="experimental-features = nix-command flakes"
+    '';
+  };
+
+  # ---------------------------------------------------------------------------
+  # disko — 分区工具（install.sh 与手动分区使用，版本随 flake.lock 锁定）
+  # ---------------------------------------------------------------------------
+  packages.${system}.disko = inputs'.disko.packages.${system}.disko;
+  apps.${system}.disko = {
+    type = "app";
+    program = "${inputs'.disko.packages.${system}.disko}/bin/disko";
   };
 
   # ---------------------------------------------------------------------------

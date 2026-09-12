@@ -184,6 +184,7 @@
 nixos-config/
 ├── flake.nix              # 入口：定义 inputs（含 sops-nix）
 ├── flake.lock             # 依赖锁定文件（有意提交到版本控制）
+├── install.sh             # 首次安装/重装一键脚本（NixOS ISO 环境执行）
 ├── .sops.yaml             # sops 加密配置（age 公钥）
 ├── outputs/default.nix    # 组装 nixosConfigurations（2 台主机）
 ├── lib/                   # mylib：scanPaths / nixosSystem
