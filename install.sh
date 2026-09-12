@@ -8,14 +8,15 @@
 # 流程：临时启用 Flakes → disko 清盘分区 → 部署 age 私钥 → nixos-install
 # ⚠️ 会清空 hosts/<主机名>/disko.nix 中 diskDevice 指向的磁盘，
 #    执行前务必确认设备名并完成数据备份！
+# 注意：ISO tty 通常无中文环境，面向用户的提示信息使用英文。
 # =============================================================================
 set -euo pipefail
 
-host=${1:?用法: sudo ./install.sh <主机名>}
+host=${1:?Usage: sudo ./install.sh <hostname>}
 cd "$(dirname "$0")"
 
 [ -f "hosts/${host}/disko.nix" ] || {
-  echo "错误: hosts/${host}/disko.nix 不存在"
+  echo "Error: hosts/${host}/disko.nix not found"
   exit 1
 }
 
@@ -40,24 +41,24 @@ for k in "${key_candidates[@]}"; do
   fi
 done
 if [ -z "$key_src" ]; then
-  echo "错误: 未找到 age 私钥（sops 解密密码与公钥依赖它）"
-  echo "请先生成并放置: age-keygen -o ~/.config/sops/age/keys.txt"
+  echo "Error: age private key not found (sops needs it to decrypt passwords and pubkeys)"
+  echo "Generate and place one first: age-keygen -o ~/.config/sops/age/keys.txt"
   exit 1
 fi
-echo "使用 age 私钥: ${key_src}"
+echo "Using age key: ${key_src}"
 
 # ---------------------------------------------------------------------------
 # 磁盘确认与清盘二次确认
 # ---------------------------------------------------------------------------
 device=$(sed -n 's/.*diskDevice = "\([^"]*\)".*/\1/p' "hosts/${host}/disko.nix" | head -1)
 echo
-echo "主机: ${host}"
-echo "磁盘: ${device:-未在 disko.nix 中找到 diskDevice，请人工确认！}"
+echo "Host: ${host}"
+echo "Disk: ${device:-diskDevice not found in disko.nix, verify manually!}"
 lsblk
 echo
-echo "⚠️  上述磁盘（${device:-?}）上的全部数据将被清空！"
-read -r -p "确认继续请输入 yes: " confirm
-[ "$confirm" = "yes" ] || { echo "已取消"; exit 1; }
+echo "WARNING: ALL data on the disk (${device:-?}) will be wiped!"
+read -r -p "Type 'yes' to continue: " confirm
+[ "$confirm" = "yes" ] || { echo "Aborted."; exit 1; }
 
 # ---------------------------------------------------------------------------
 # 分区 + 格式化 + 挂载 /mnt（disko 版本随 flake.lock 锁定）
@@ -77,7 +78,7 @@ sudo chmod 600 /mnt/var/lib/sops-nix/age/keys.txt
 sudo env NIX_CONFIG="$NIX_CONFIG" nixos-install --flake ".#${host}" --no-root-password
 
 echo
-echo "安装完成。重启后请："
-echo "  1. 确认 /var/lib/sops-nix/age/keys.txt 存在（脚本已部署）"
-echo "  2. 立即修改 misty 密码（历史哈希曾在仓库中暴露）"
-echo "  3. 如在装好的系统上改配置，直接 git pull 后 nixos-rebuild switch 即可"
+echo "Install complete. After reboot:"
+echo "  1. Ensure /var/lib/sops-nix/age/keys.txt exists (deployed by this script)"
+echo "  2. Change the misty password immediately (the old hash was exposed in the repo history)"
+echo "  3. On the new system, git pull and nixos-rebuild switch as usual"
