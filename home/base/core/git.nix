@@ -34,6 +34,15 @@
       # 初始分支名
       init.defaultBranch = "main";
 
+      # GitHub 凭据由 gh CLI 提供（gh auth login 完成认证后自动生效）。
+      # 不让 gh 改写 gitconfig：HM 生成的该文件是只读 store 符号链接，
+      # gh 的 git-config 步骤会因只读文件系统而失败。
+      credential = {
+        "https://github.com" = {
+          helper = "!${pkgs.gh}/bin/gh auth git-credential";
+        };
+      };
+
       # 推送时自动设置上游
       push.autoSetupRemote = true;
 
