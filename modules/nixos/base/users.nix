@@ -29,7 +29,7 @@
     # ---------------------------------------------------------------------------
     openssh.authorizedKeys = {
       keys = myvars.mainSshAuthorizedKeys;
-      files = [ config.sops.secrets."ssh/authorized_keys".path ];
+      keyFiles = [ config.sops.secrets."ssh/authorized_keys".path ];
     };
 
     # 加入以下用户组：
