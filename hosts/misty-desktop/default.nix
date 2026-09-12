@@ -10,14 +10,10 @@
 # =============================================================================
 {
   myvars,
-  lib,
-  pkgs,
-  inputs,
   ...
 }:
 let
   hostName = "misty-desktop";
-  inherit (myvars.networking.hostsAddr.${hostName}) iface ipv4;
 in
 {
   # ---------------------------------------------------------------------------
