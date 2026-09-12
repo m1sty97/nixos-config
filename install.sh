@@ -15,6 +15,12 @@ set -euo pipefail
 host=${1:?Usage: sudo ./install.sh <hostname>}
 cd "$(dirname "$0")"
 
+# sudo 切换到 root 后，libgit2 会因仓库属主不同而拒绝打开
+# （safe.directory 检查），将仓库路径加入 root 的信任列表
+repo_dir=$(pwd)
+sudo git config --global --get-all safe.directory 2>/dev/null | grep -qxF "$repo_dir" || \
+  sudo git config --global --add safe.directory "$repo_dir"
+
 [ -f "hosts/${host}/disko.nix" ] || {
   echo "Error: hosts/${host}/disko.nix not found"
   exit 1
