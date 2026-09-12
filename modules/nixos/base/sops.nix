@@ -33,8 +33,8 @@
   # sops 配置
   # ---------------------------------------------------------------------------
   sops = {
-    # 加密密钥文件路径（相对于 flake 根目录）
-    defaultSopsFile = ../../secrets/secrets.yaml;
+    # 加密密钥文件路径（相对于本文件：base → nixos → modules → 仓库根）
+    defaultSopsFile = ../../../secrets/secrets.yaml;
 
     # age 私钥路径 — 运行时用于解密
     # 部署时需将 age 私钥复制到此路径
