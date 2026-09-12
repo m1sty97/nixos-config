@@ -34,8 +34,8 @@
         "browser.download.useDownloadDir" = false;
       };
 
-      # 扩展程序
-      extensions = with pkgs.nur.repos.rycee.firefox-addons; [
+      # 扩展程序（extensions 为 submodule 结构，包列表在 packages 下）
+      extensions.packages = with pkgs.nur.repos.rycee.firefox-addons; [
         ublock-origin # 广告拦截
       ];
     };
