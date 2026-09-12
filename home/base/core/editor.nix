@@ -39,6 +39,11 @@
       # Git
       vim-fugitive # Git 集成
 
+      # 编辑辅助
+      vim-commentary # 快捷注释（gcc / gcap）
+      rainbow # 彩虹括号
+      indentLine # 缩进辅助线
+
       # 状态栏
       lightline-vim # 轻量状态栏
     ];
@@ -56,10 +61,13 @@
       set cursorline      " 高亮当前行
       set showmatch       " 高亮匹配括号
       set showcmd         " 显示命令
+      set laststatus=2    " 总是显示状态栏
+      set termguicolors   " 启用真彩色
 
       " 编辑设置
       set tabstop=4       " Tab 显示宽度
       set shiftwidth=4    " 自动缩进宽度
+      set softtabstop=4   " 编辑模式退格一次回退 4 个空格
       set expandtab       " Tab 转空格
       set autoindent      " 自动缩进
       set smartindent     " 智能缩进
@@ -75,7 +83,11 @@
       set fileencoding=utf-8
 
       " 配色方案
+      set background=dark
       colorscheme catppuccin_macchiato
+
+      " 彩虹括号
+      let g:rainbow_active = 1
 
       " NERDTree 快捷键
       map <C-n> :NERDTreeToggle<CR>

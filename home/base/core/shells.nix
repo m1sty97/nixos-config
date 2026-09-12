@@ -11,10 +11,12 @@
 let
   # Shell 别名
   shellAliases = {
-    # 文件操作
-    ll = "ls -la";
-    la = "ls -A";
-    l = "ls -CF";
+    # 文件操作（eza 替代 ls，包在 tools.nix 中安装）
+    ls = "eza --icons";
+    ll = "eza -l --icons --git";
+    la = "eza -a --icons";
+    lt = "eza --tree --icons";
+    lla = "eza -la --icons --git";
 
     # Git 快捷命令
     gs = "git status";
@@ -41,17 +43,24 @@ in
   programs.zsh = {
     enable = true;
 
-    # 自动补全
-    autosuggestion.enable = true;
+    # 命令补全、历史命令灰色建议、语法高亮
+    enableCompletion = true;
+    autosuggestion = {
+      enable = true;
+      # 先按历史记录、再按补全匹配生成建议
+      strategy = [ "history" "completion" ];
+    };
     syntaxHighlighting.enable = true;
 
     # 历史记录配置
     history = {
       size = 10000;
       save = 10000;
+      append = true; # 追加写入而非覆盖历史文件
       ignoreDups = true;
       ignoreSpace = true;
       share = true; # 多终端共享历史
+      extended = true; # 记录命令执行时间与耗时
     };
 
     # Shell 别名
@@ -59,6 +68,12 @@ in
 
     # .zshrc 额外配置
     initContent = ''
+      # Tab 补全菜单：方向键在候选项间选择
+      zstyle ':completion:*' menu select
+
+      # 输入目录名即可跳转（无需 cd）
+      setopt auto_cd
+
       # 加载 ~/.local/bin 到 PATH
       export PATH="$PATH:$HOME/.local/bin"
 
