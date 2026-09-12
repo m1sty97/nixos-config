@@ -18,18 +18,20 @@ let
     lt = "eza --tree --icons";
     lla = "eza -la --icons --git";
 
-    # Git 快捷命令
-    gs = "git status";
-    gd = "git diff";
-    gc = "git commit";
-    gp = "git push";
-    gl = "git pull";
+    # Git 快捷命令（g 前缀 + 子命令全拼）
+    gstatus = "git status";
+    gadd = "git add";
+    gdiff = "git diff";
+    gcommit = "git commit";
+    gpush = "git push";
+    gpull = "git pull";
+    glog = "git log --oneline --graph --decorate";
 
-    # NixOS 快捷命令
-    ns = "sudo nixos-rebuild switch --flake .#";
-    nb = "sudo nixos-rebuild boot --flake .#";
-    nt = "nixos-rebuild test --flake .#";
-    ng = "nix-collect-garbage --delete-older-than 7d";
+    # NixOS 快捷命令（rebuild + 子命令）
+    rebuild = "sudo nixos-rebuild switch --flake .#";
+    rebuild-boot = "sudo nixos-rebuild boot --flake .#";
+    rebuild-test = "nixos-rebuild test --flake .#";
+    nclean = "sudo nix-collect-garbage --delete-older-than 7d";
 
     # 目录跳转（配合 zoxide 使用 z 命令）
     ".." = "cd ..";
