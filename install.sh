@@ -84,7 +84,4 @@ sudo chmod 600 /mnt/var/lib/sops-nix/age/keys.txt
 sudo env NIX_CONFIG="$NIX_CONFIG" nixos-install --flake ".#${host}" --no-root-password
 
 echo
-echo "Install complete. After reboot:"
-echo "  1. Ensure /var/lib/sops-nix/age/keys.txt exists (deployed by this script)"
-echo "  2. Change the misty password immediately (the old hash was exposed in the repo history)"
-echo "  3. On the new system, git pull and nixos-rebuild switch as usual"
+echo "Install complete. Reboot."
