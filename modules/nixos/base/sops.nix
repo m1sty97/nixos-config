@@ -61,8 +61,14 @@
 
       # SSH 公钥 — 从 secrets.yaml 中的 ssh.authorized_keys 读取
       # 值为多行字符串（每行一个公钥），由 sshd 认证时经
-      # ssh.nix 的 AuthorizedKeysFile 读取
-      "ssh/authorized_keys" = { };
+      # ssh.nix 的 AuthorizedKeysFile 读取。
+      # sshd 以目标用户身份打开 AuthorizedKeysFile，
+      # 因此该文件需归 misty 所有（默认 root 0400 会读取失败）
+      "ssh/authorized_keys" = {
+        owner = myvars.username;
+        group = "users";
+        mode = "0400";
+      };
     };
   };
 }
