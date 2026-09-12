@@ -87,37 +87,41 @@ nixos-config/
 git clone <你的仓库地址> ~/nixos-config
 cd ~/nixos-config
 
-# 3. 确认目标磁盘设备名（⚠️ 下一步会清空该磁盘上的全部数据！）
+# 3. ISO 环境默认未启用 Flakes，先临时开启（仅当前 shell 有效，
+#    装好的系统配置中已永久启用，无需重复）
+export NIX_CONFIG="experimental-features = nix-command flakes"
+
+# 4. 确认目标磁盘设备名（⚠️ 下一步会清空该磁盘上的全部数据！）
 lsblk
 
-# 4. 修改 hosts/misty-desktop/disko.nix 顶部的 diskDevice 为实际磁盘设备
+# 5. 修改 hosts/misty-server/disko.nix 顶部的 diskDevice 为实际磁盘设备
 
-# 5. 声明式分区、格式化并挂载到 /mnt（磁盘布局由 disko.nix 定义）
-sudo nix run github:nix-community/disko -- --mode destroy,format,mount hosts/misty-desktop/disko.nix
+# 6. 声明式分区、格式化并挂载到 /mnt（磁盘布局由 disko.nix 定义）
+sudo nix run github:nix-community/disko -- --mode destroy,format,mount hosts/misty-server/disko.nix
 
-# 6. 部署 age 私钥到目标系统（sops 解密依赖，密钥生成见 secrets/README.md）
+# 7. 部署 age 私钥到目标系统（sops 解密依赖，密钥生成见 secrets/README.md）
 sudo mkdir -p /mnt/var/lib/sops-nix/age
 sudo cp ~/.config/sops/age/keys.txt /mnt/var/lib/sops-nix/age/keys.txt
 sudo chmod 600 /mnt/var/lib/sops-nix/age/keys.txt
 
-# 7. 编辑 vars/default.nix，修改：
+# 8. 编辑 vars/default.nix，修改：
 #    - useremail
 #    - 密码哈希与 SSH 公钥由 sops-nix 管理，
 #      如需修改执行 `sops secrets/secrets.yaml`（见 secrets/README.md）
 
-# 8. 编辑 vars/networking.nix，修改网络配置
+# 9. 编辑 vars/networking.nix，修改网络配置
 
-# 9. 安装 NixOS
-sudo nixos-install --flake .#misty-desktop --no-root-password
+# 10. 安装 NixOS
+sudo nixos-install --flake .#misty-server --no-root-password
 
-# 10. 重启
+# 11. 重启
 reboot
 ```
 
 > 磁盘分区布局由 [disko](https://github.com/nix-community/disko) 声明式管理，
 > 装机时不再需要手动 `gdisk`/`mkfs`。`hardware-configuration.nix` 仅保留
-> 内核模块等硬件相关配置。重装系统只需重复步骤 5-9，
-> **注意重装会清空磁盘上的 age 私钥，必须重复步骤 6 重新部署**，
+> 内核模块等硬件相关配置。重装系统只需重复步骤 4-10，
+> **注意重装会清空磁盘上的 age 私钥，必须重复步骤 7 重新部署**，
 > 否则首次开机时 sops 无法解密用户密码与 SSH 公钥。
 
 ### 2. 日常部署
