@@ -1,0 +1,279 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Misty 的 NixOS 配置架构",
+    "locale": "zh-CN",
+    "output": "docs/architecture.html",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    {
+      "id": "flake",
+      "type": "backend",
+      "label": "flake.nix",
+      "sublabel": "inputs ×7 · 南大镜像",
+      "row": 0,
+      "col": 0
+    },
+    {
+      "id": "outputs",
+      "type": "backend",
+      "label": "outputs/default.nix",
+      "sublabel": "组装 2 台主机",
+      "row": 0,
+      "col": 1
+    },
+    {
+      "id": "hmdesktop",
+      "type": "backend",
+      "label": "misty-desktop",
+      "sublabel": "双合成器 · 物理机",
+      "row": 0,
+      "col": 2
+    },
+    {
+      "id": "hmsrv",
+      "type": "backend",
+      "label": "misty-server",
+      "sublabel": "服务器 · 虚拟机",
+      "row": 1,
+      "col": 1
+    },
+    {
+      "id": "greetd",
+      "type": "backend",
+      "label": "greetd + tuigreet",
+      "sublabel": "tuigreet 会话菜单",
+      "row": 0,
+      "col": 3
+    },
+    {
+      "id": "niri",
+      "type": "frontend",
+      "label": "Niri",
+      "sublabel": "滚动平铺合成器",
+      "row": 0,
+      "col": 4
+    },
+    {
+      "id": "hyprland",
+      "type": "frontend",
+      "label": "Hyprland",
+      "sublabel": "动态平铺合成器",
+      "row": 1,
+      "col": 4
+    },
+    {
+      "id": "basemod",
+      "type": "backend",
+      "label": "modules/nixos/base",
+      "sublabel": "UEFI · ssh · users",
+      "row": 1,
+      "col": 2
+    },
+    {
+      "id": "hmhome",
+      "type": "backend",
+      "label": "home/ 用户层",
+      "sublabel": "home-manager 层",
+      "row": 1,
+      "col": 3
+    },
+    {
+      "id": "noctalia",
+      "type": "frontend",
+      "label": "Noctalia + fcitx5",
+      "sublabel": "共用 Shell/输入法",
+      "row": 2,
+      "col": 3
+    },
+    {
+      "id": "sops",
+      "type": "security",
+      "label": "sops-nix 密钥链路",
+      "sublabel": "secrets.yaml 解密",
+      "row": 2,
+      "col": 2
+    },
+    {
+      "id": "disko",
+      "type": "database",
+      "label": "disko.nix × 2",
+      "sublabel": "btrfs @/@home/@nix",
+      "row": 2,
+      "col": 1
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Flake 组装层",
+      "wraps": [
+        "flake",
+        "outputs"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "桌面会话层",
+      "wraps": [
+        "greetd",
+        "niri",
+        "hyprland"
+      ]
+    },
+    {
+      "kind": "security-group",
+      "label": "sops 加密密钥",
+      "wraps": [
+        "sops"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "flake-to-outputs",
+      "from": "flake",
+      "to": "outputs",
+      "label": "组装主机",
+      "variant": "emphasis"
+    },
+    {
+      "id": "outputs-to-desktop",
+      "from": "outputs",
+      "to": "hmdesktop",
+      "label": "模块注入",
+      "variant": "emphasis"
+    },
+    {
+      "id": "outputs-to-server",
+      "from": "outputs",
+      "to": "hmsrv",
+      "label": "模块注入",
+      "labelDy": 80
+    },
+    {
+      "id": "desktop-to-greetd",
+      "from": "hmdesktop",
+      "to": "greetd",
+      "label": "登录管理"
+    },
+    {
+      "id": "greetd-to-niri",
+      "from": "greetd",
+      "to": "niri",
+      "label": "会话选择",
+      "variant": "emphasis"
+    },
+    {
+      "id": "greetd-to-hyprland",
+      "from": "greetd",
+      "to": "hyprland",
+      "label": "会话选择"
+    },
+    {
+      "id": "desktop-to-base",
+      "from": "hmdesktop",
+      "to": "basemod",
+      "label": "imports base",
+      "labelDy": 130
+    },
+    {
+      "id": "server-to-base",
+      "from": "hmsrv",
+      "to": "basemod",
+      "label": "imports base"
+    },
+    {
+      "id": "desktop-to-home",
+      "from": "hmdesktop",
+      "to": "hmhome",
+      "label": "home-modules"
+    },
+    {
+      "id": "home-to-noctalia",
+      "from": "hmhome",
+      "to": "noctalia",
+      "label": "共用 GUI",
+      "labelDy": 90
+    },
+    {
+      "id": "disko-to-server",
+      "from": "disko",
+      "to": "hmsrv",
+      "label": "声明磁盘"
+    },
+    {
+      "id": "sops-to-base",
+      "from": "sops",
+      "to": "basemod",
+      "label": "密码与公钥",
+      "variant": "security",
+      "labelDy": -40
+    },
+    {
+      "id": "disko-to-desktop",
+      "from": "disko",
+      "to": "hmdesktop",
+      "label": "声明磁盘",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "via": [
+        [
+          290,
+          620
+        ],
+        [
+          30,
+          620
+        ],
+        [
+          30,
+          30
+        ],
+        [
+          480,
+          30
+        ]
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "组装层",
+      "items": [
+        "flake inputs 统一 follows nixpkgs（南大镜像 git+https）",
+        "specialArgs 携带 inputs/mylib/myvars/pkgs-stable 进入所有模块",
+        "mylib.scanPaths 自动导入目录下的模块文件"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "桌面主机",
+      "items": [
+        "Niri 与 Hyprland 同时安装，登录时经 tuigreet 会话菜单切换",
+        "Noctalia Shell + fcitx5 为两合成器共用配置",
+        "disko 声明磁盘：ESP + swap + btrfs（@/@home/@nix）"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "安全与密钥",
+      "items": [
+        "sops-nix：密码哈希在用户创建前解密，SSH 公钥运行时读取",
+        "root 密码已锁定，提权仅走 sudo",
+        "sshd 禁止密码登录，仅密钥认证"
+      ]
+    }
+  ],
+  "layout": {
+    "mode": "grid",
+    "cols": 5,
+    "gapX": 60,
+    "gapY": 110,
+    "cellW": 130,
+    "cellH": 84
+  }
+}

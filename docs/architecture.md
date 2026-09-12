@@ -1,6 +1,8 @@
 # 架构图
 
 > 使用 [Mermaid](https://mermaid.js.org/) 绘制，GitHub/多数 Markdown 查看器可直接渲染。
+> 交互式版本见 [architecture.html](./architecture.html)（由 [archify](https://github.com/tt-a1i/archify)
+> 生成并通过 showcase 校验，源规格为 [architecture-diagram.json](./architecture-diagram.json)）。
 > 与代码同步维护：模块增删时请更新此图。
 
 ## 总体架构
