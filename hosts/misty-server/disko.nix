@@ -13,7 +13,7 @@
 { ... }:
 let
   # virtio 磁盘设备名；装机前用 lsblk 确认
-  diskDevice = "/dev/vda";
+  diskDevice = "/dev/sda";
 in
 {
   disko.devices.disk.main = {
