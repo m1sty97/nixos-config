@@ -12,10 +12,14 @@
 # 方案详见 docs/ai-dev-environment-design.md。
 # =============================================================================
 {
+  inputs,
   config,
   ...
 }:
 {
+  # 官方 NixOS 模块（flake input,见 flake.nix 的 hermes-agent）
+  imports = [ inputs.hermes-agent.nixosModules.default ];
+
   # API key 等敏感环境变量经 sops 注入(激活时写入 HERMES_HOME/.env);
   # 内容为多行 KEY=VALUE,后续 hermes 新凭据直接追加到该值即可
   sops.secrets."hermes/env" = { };
