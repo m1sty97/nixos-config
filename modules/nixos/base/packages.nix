@@ -35,8 +35,16 @@
     age
 
     # 多语言开发工具链（AI 开发环境方案 docs/ai-dev-environment-design.md §5）
-    # 工具链版本全局声明；项目内依赖由语言原生工具（npm/uv）管理
+    # 工具链版本全局声明；项目内依赖由语言原生工具（pnpm/uv）管理
     nodejs_24 # Node.js LTS
+    pnpm # Node 包管理器（registry 镜像在项目模板 shellHook 中声明）
     uv # Python 包/项目管理器
   ];
+
+  # uv 系统级 PyPI 镜像（CERNET；项目内可用 UV_DEFAULT_INDEX 覆盖）
+  environment.etc."uv/uv.toml".text = ''
+    [[index]]
+    url = "https://mirrors.cernet.edu.cn/pypi/simple"
+    default = true
+  '';
 }

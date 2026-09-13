@@ -65,11 +65,11 @@ hermes ──────────────┐            dsh ────
 
 ## 5. 开发环境(多语言声明式)
 
-- **全局(NixOS 声明,base 层)**:nodejs(LTS)、uv、git、gh、常用 CLI;
+- **全局(NixOS 声明,base 层)**:nodejs(LTS)、pnpm(Node 包管理器)、uv、git、gh、常用 CLI;uv 的 PyPI 索引经 `/etc/uv/uv.toml` 指向 CERNET 镜像;
 - **项目级(devShell 模板,仓库 `dev-templates/` 新增)**:
-  - `node-uv` 模板:nodejs + uv + 常用工具,项目内 `nix develop` 进入;
-  - `python-uv` 模板:python + uv(venv/lock 由 uv 管理,nix 不插手项目依赖);
-  - 按需再加 go / rust 模板;
+  - `node-uv` 模板:nodejs + pnpm + uv,npm registry 走 npmmirror(shellHook 声明);
+  - `python-uv` 模板:python + uv(PyPI 走 CERNET 镜像,venv/lock 由 uv 管理,nix 不插手项目依赖);
+  - 按需再加 go / rust 模板(新增模板须同步对应生态镜像配置);
 - **node / uv 的声明式边界**(本轮结论):工具链版本全局声明;项目依赖由语言原生工具管理,nix 只锁工具链不锁业务依赖。
 
 ## 6. 实施阶段(每阶段过 `nix flake check` 后 switch)
