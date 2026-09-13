@@ -190,6 +190,10 @@ nix profile history --profile /nix/var/nix/profiles/system  # 查看历史
 sudo nix-collect-garbage --delete-older-than 7d  # 垃圾回收
 nix fmt                             # 格式化 Nix 代码
 nix develop                         # 进入开发环境
+
+# btrfs 定时快照（Snapper，每小时自动，root/home 各有保留策略）
+snapper -c home list                # 查看快照
+sudo snapper -c home undochange 10..11  # 回滚两快照间的变更
 ```
 
 ## ⌨️ Niri 快捷键速查
