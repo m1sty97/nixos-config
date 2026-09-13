@@ -104,6 +104,23 @@ in
         ../home/hosts/linux/misty-server.nix
       ];
     };
+
+    # =========================================================================
+    # 新增服务器：复制 hosts/server-template 与 home/hosts/linux/server-template.nix
+    # （步骤见模板文件头注释），然后参考下方注释示例注册。
+    # =========================================================================
+    # misty-server-2 = mylib.nixosSystem {
+    #   inherit lib system myvars genSpecialArgs;
+    #
+    #   nixos-modules = [
+    #     ../modules/nixos/server/default.nix
+    #     ../hosts/misty-server-2
+    #   ];
+    #
+    #   home-modules = [
+    #     ../home/hosts/linux/misty-server-2.nix
+    #   ];
+    # };
   };
 
   # ---------------------------------------------------------------------------

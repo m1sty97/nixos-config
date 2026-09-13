@@ -30,6 +30,10 @@
   `hosts/<名>/default.nix` + `hosts/<名>/disko.nix` +
   `hosts/<名>/hardware-configuration.nix` +
   `home/hosts/linux/<名>.nix` + 在 `outputs/default.nix` 中添加 `nixosConfigurations` 条目。
+- **新增服务器优先使用模板**：复制 `hosts/server-template/` 与
+  `home/hosts/linux/server-template.nix`（七步流程见模板头注释），
+  全局替换 `TEMPLATE_HOST` 后按需个性化；outputs 中有注释好的注册示例。
+  模板目录未被 flake 注册，不会被构建。桌面主机保持 bespoke，不走模板。
 - **磁盘布局由 disko 声明式管理**。每台主机的分区/格式化定义在 `hosts/<名>/disko.nix`，
   挂载点由 disko 自动生成；`hardware-configuration.nix` 仅保留内核模块等硬件相关配置，
   **不要在其中重复定义 `fileSystems` / `swapDevices`**，否则与 disko 生成的内容冲突。

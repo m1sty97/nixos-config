@@ -64,13 +64,15 @@ nixos-config/
 │   │   └── fcitx5.nix           #       中文输入法
 │   └── hosts/linux/             #   主机专属 home 入口
 │       ├── misty-desktop.nix    #     双合成器桌面（显式导入并启用 niri + hyprland）
-│       └── misty-server.nix     #     服务器（仅 CLI）
+│       ├── misty-server.nix     #     服务器（仅 CLI）
+│       └── server-template.nix  #     服务器 home 入口模板
 │
 ├── hosts/                       # 主机系统级配置
 │   ├── misty-desktop/           #   双合成器桌面
 │   │   ├── disko.nix            #     磁盘分区声明（disko）
 │   │   └── hardware-configuration.nix  # 内核模块等硬件相关配置
-│   └── misty-server/            #   服务器（disko.nix + qemu-guest）
+│   ├── misty-server/            #   服务器（disko.nix + qemu-guest）
+│   └── server-template/         #   服务器模板（新增 server 时复制，未被构建）
 │
 └── outputs/
     └── default.nix              # 组装 2 个 nixosConfigurations
