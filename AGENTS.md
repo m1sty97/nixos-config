@@ -132,9 +132,10 @@
 - 新增敏感配置时，通过 `sops secrets/secrets.yaml` 添加 key，然后在
   `modules/nixos/base/sops.nix` 的 `sops.secrets` 中注册，在需要使用的模块中通过
   `config.sops.secrets."key/path".path` 引用解密后的文件路径。
-- ⚠️ **`sops.secrets."a/b"` 的斜杠是嵌套路径**：YAML 中必须写成嵌套结构
-  （顶层 `a:` 下嵌 `b:`），不能写成字面量的 `a/b:` 顶层 key，否则
-  sops-install-secrets 激活时会报 "the key 'a' cannot be found" 构建失败。
+- ⚠️ **`sops.secrets."a/b"` 的斜杠是嵌套路径**：sops-nix 会按 `a` → `b` 逐层查找，
+  字面量的 `a/b:` 顶层 key 会导致 sops-install-secrets 报
+  "the key 'a' cannot be found"。跨服务的环境变量块使用**连字符扁平 key**
+  （如 hermes 官方约定的 `hermes-env`），避免结构歧义。
 - **禁止读取敏感文件内容**：age 私钥（`keys.txt`）、API token、解密后的 sops 明文等
   一律不读取、不输出。需要确认加密文件结构时，只查看 key 名、行数等元信息，
   解密值必须以 `<redacted>` 形式掩蔽。
