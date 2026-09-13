@@ -33,5 +33,10 @@
     # 注意：这只是命令行工具；激活时的自动解密由 sops-nix 模块负责
     sops
     age
+
+    # 多语言开发工具链（AI 开发环境方案 docs/ai-dev-environment-design.md §5）
+    # 工具链版本全局声明；项目内依赖由语言原生工具（npm/uv）管理
+    nodejs_24 # Node.js LTS
+    uv # Python 包/项目管理器
   ];
 }
