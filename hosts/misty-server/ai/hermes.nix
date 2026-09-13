@@ -21,8 +21,9 @@
   imports = [ inputs.hermes-agent.nixosModules.default ];
 
   # API key 等敏感环境变量经 sops 注入(激活时写入 HERMES_HOME/.env);
-  # 内容为多行 KEY=VALUE,后续 hermes 新凭据直接追加到该值即可
-  sops.secrets."hermes/env" = { };
+  # key 名用连字符扁平形式 hermes-env(官方文档约定):sops-nix 中斜杠会被
+  # 解释为嵌套路径,扁平连字符命名可避免结构歧义,后续新凭据直接追加到该值
+  sops.secrets."hermes-env" = { };
 
   services.hermes-agent = {
     enable = true;
@@ -45,7 +46,7 @@
 
     # 敏感环境变量文件(sops 解密,systemd EnvironmentFile 格式)
     environmentFiles = [
-      config.sops.secrets."hermes/env".path
+      config.sops.secrets."hermes-env".path
     ];
 
     # 阶段 4/5 预留:共享记忆(Hindsight)与知识库(LightRAG)经

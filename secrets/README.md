@@ -81,9 +81,13 @@ cat /run/secrets/misty/hashed_password
 
 | 路径 | 说明 | 使用位置 |
 |------|------|----------|
-| `misty/hashed_password` | 用户密码哈希 | `modules/nixos/base/users.nix` → `hashedPasswordFile` |
-| `ssh/authorized_keys` | SSH 公钥（多行字符串） | `modules/nixos/base/ssh.nix` → sshd `AuthorizedKeysFile` |
-| `hermes/env` | Hermes 环境变量（多行 KEY=VALUE，如 `DEEPSEEK_API_KEY=sk-...`） | `hosts/misty-server/ai/hermes.nix` → `environmentFiles` |
+| `misty.hashed_password` | 用户密码哈希 | `modules/nixos/base/users.nix` → `hashedPasswordFile` |
+| `ssh.authorized_keys` | SSH 公钥（多行字符串） | `modules/nixos/base/ssh.nix` → sshd `AuthorizedKeysFile` |
+| `hermes-env` | Hermes 环境变量（多行 KEY=VALUE，如 `DEEPSEEK_API_KEY=sk-...`） | `hosts/misty-server/ai/hermes.nix` → `environmentFiles` |
+
+> ⚠️ 密钥命名约定：`sops.secrets."a/b"` 中的斜杠会被 sops-nix 解释为嵌套路径。
+> 为避免结构歧义，跨服务的环境变量块使用**连字符扁平 key**（如 `hermes-env`，
+> hermes 官方文档约定），嵌套结构仅用于确实存在层级关系的密钥。
 
 ## 添加新密钥
 
