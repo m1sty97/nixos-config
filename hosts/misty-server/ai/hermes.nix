@@ -26,10 +26,10 @@
     # CLI 进系统 PATH(SSH 手动使用;委派链路 hermes → dsh 也走 PATH)
     addToSystemPackages = true;
 
-    # 模型:DeepSeek API(OpenAI 兼容,flash 档)
+    # 模型:DeepSeek API(OpenAI 兼容,flash 档;base_url 官方即根路径,不带 /v1)
     settings.model = {
       default = "deepseek-flash";
-      base_url = "https://api.deepseek.com/v1";
+      base_url = "https://api.deepseek.com";
     };
 
     # Web dashboard — 绑定 0.0.0.0 激活鉴权门,局域网(Windows/手机)访问
