@@ -83,6 +83,7 @@ cat /run/secrets/misty/hashed_password
 |------|------|----------|
 | `misty/hashed_password` | 用户密码哈希 | `modules/nixos/base/users.nix` → `hashedPasswordFile` |
 | `ssh/authorized_keys` | SSH 公钥（多行字符串） | `modules/nixos/base/ssh.nix` → sshd `AuthorizedKeysFile` |
+| `hermes/env` | Hermes 环境变量（多行 KEY=VALUE，如 `DEEPSEEK_API_KEY=sk-...`） | `hosts/misty-server/ai/hermes.nix` → `environmentFiles` |
 
 ## 添加新密钥
 

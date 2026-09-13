@@ -76,6 +76,12 @@
       url = "github:nix-community/NUR";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # hermes-agent — Nous Research 的个人 AI 助理框架（官方 NixOS 模块）
+    # 不跟随 nixpkgs（上游 Tier 2 best-effort，锁版本降低破坏风险）
+    hermes-agent = {
+      url = "github:NousResearch/hermes-agent";
+    };
   };
 
   # ---------------------------------------------------------------------------
