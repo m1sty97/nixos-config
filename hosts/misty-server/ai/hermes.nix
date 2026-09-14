@@ -38,10 +38,11 @@
     # misty 无需独立 CLI 安装)
     addToSystemPackages = true;
 
-    # 模型:DeepSeek API(OpenAI 兼容,flash 档;base_url 官方即根路径,不带 /v1)
+    # 模型:DeepSeek API(OpenAI 兼容,flash 档)
     settings.model = {
+      provider = "deepseek";
       default = "deepseek-flash";
-      base_url = "https://api.deepseek.com";
+      base_url = "https://api.deepseek.com/v1";
     };
 
     # Web dashboard — 绑定 0.0.0.0 激活鉴权门,局域网(Windows/手机)访问;
