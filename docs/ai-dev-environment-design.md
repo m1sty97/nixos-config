@@ -14,14 +14,14 @@
 - **多语言开发环境**:常用语言工具链 + 项目级 devShell 模板,node/uv 依赖声明式管理;
 - 模型统一走 **DeepSeek API**(无 GPU,不做本地推理;embedding 先本地小模型,语料大再切 API)。
 
-约束:维护代价最低、部署形态收敛(最终仅两种:NixOS 模块、nix 环境 + systemd 服务)、8G 内存需给大头服务设上限。
+约束:维护代价最低、部署形态收敛(NixOS 模块、HM 用户级服务、nix 环境 + systemd 服务)、8G 内存需给大头服务设上限。
 
 ## 2. 选型决策记录
 
 | 领域 | 决策 | 落选方案与理由 |
 |------|------|----------------|
-| Agent Harness | hermes(Nous Research,官方 NixOS 模块)+ dsh(官方 npm 包 `@deepseek-ai/dsh`) | 两者是用户指定;hermes 走系统服务形态,dsh 走 nodejs + npm 用户层安装 |
-| hermes 部署 | NixOS 系统服务模块(官方支持),非 Home Manager 单用户形态 | 助理需 7×24 常驻、离场可访问,HM 会话绑定形态不合 |
+| Agent Harness | hermes(Nous Research,官方 flake 模块)+ dsh(官方 npm 包 `@deepseek-ai/dsh`) | 两者是用户指定;hermes 走 HM 用户级服务形态(2026-09-14 由系统服务改版),dsh 走 nodejs + npm 用户层安装 |
+| hermes 部署 | NixOS 系统服务（官方模块）+ `addToSystemPackages` 共享状态（官方推荐共享模式），以模块自动创建的非特权专用用户 `hermes` 运行，交互用户（misty）加入 hermes 组 | 2026-09-14 曾改版 HM 用户级/CLI 隔离后回退：官方警告不开 addToSystemPackages 时 shell 里跑 hermes 会另建 ~/.hermes 分叉；共享状态正是单用户服务器想要的效果，代价是组成员可读服务 .env（单用户场景可接受） |
 | dsh 部署 | nix 声明 nodejs 运行时 + `npm install -g @deepseek-ai/dsh` + systemd 托管 `dsh web` | buildNpmPackage 全声明式被否:预览版迭代快,每次升级更 npmDepsHash 成本过高;稳定后再收编 |
 | 记忆服务 | **Hindsight**(vectorize-io):MCP + REST 双接口,retain/recall/reflect | mcp-memory-service(最轻,作降级替补)、Mem0+OpenMemory(要 Postgres+Qdrant,8G 偏重)、Zep/Graphiti(要 Neo4j)、Letta(重) |
 | RAG 服务 | **LightRAG Server**(HKUDS):REST API + MCP(`lightrag-mcp`)+ 知识图谱检索 + 文档 ingest | Open WebUI(聊天 UI 优先,RAG 非核心,大部分功能冗余)、khoj(定位"第二助理",与 hermes 重叠)、RAGFlow(要 ES,8G 扛不动)、RAGLight/LightRAG 框架自建服务(维护成本最高) |
@@ -35,7 +35,7 @@
 
 | 服务 | 形态 | 端口(默认,部署时核对) | 数据路径 | 内存上限 |
 |------|------|------------------------|----------|----------|
-| hermes-agent | NixOS 模块(系统服务) | Web UI 端口以官方模块默认为准 | `/var/lib/hermes` | 1.5G |
+| hermes-agent | NixOS 系统服务（专用用户 hermes，CLI 共享状态） | Web UI 9119 | `/var/lib/hermes` | 1.5G（gateway+backend 两进程合计） |
 | dsh | nix nodejs + systemd 服务 | Web UI 3080(内部 3079) | `/var/lib/dsh` | 1G |
 | Hindsight | nix Python venv + systemd | REST API(默认端口部署时核对)+ MCP | `/var/lib/hindsight` | 1G |
 | LightRAG Server | nix Python venv + systemd | API/WebUI 9621 + Ollama 兼容接口 | `/var/lib/lightrag`,知识源 `/srv/knowledge` | 1.5G |
@@ -52,7 +52,7 @@ Windows Web / 手机
         │  (局域网 HTTP,安全加固后议题)
         ▼
 hermes ──────────────┐            dsh ──────────────┐
- (NixOS 服务)        │ shell 委派   (systemd 服务)  │
+ (系统服务)          │ shell 委派   (systemd 服务)  │
         │            ▼              │              ▼
         ├── MCP/REST ─→ Hindsight(共享记忆)←─ MCP/REST ─┤
         ├── MCP/REST ─→ LightRAG(知识库 RAG)←─ MCP/REST ─┤
@@ -75,7 +75,7 @@ hermes ──────────────┐            dsh ────
 ## 6. 实施阶段(每阶段过 `nix flake check` 后 switch)
 
 1. **开发环境**:base 层全局工具(nodejs/uv)+ `dev-templates/` 模板;
-2. **hermes**:引入官方 NixOS 模块,配置 DeepSeek API、远程访问;
+2. **hermes**:引入官方 NixOS 模块(系统服务+addToSystemPackages 共享状态,专用用户 hermes,misty 入 hermes 组),配置 DeepSeek API、远程访问;
 3. **dsh**:nodejs 运行时 + npm 安装 + systemd 服务 + Web UI;
 4. **Hindsight**:Python venv 打包 + systemd + DeepSeek API 接入;
 5. **LightRAG**:Python venv 打包 + systemd + `/srv/knowledge` 监听目录;
