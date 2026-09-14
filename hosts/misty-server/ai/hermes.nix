@@ -60,6 +60,9 @@
 
     # 阶段 4/5 预留:共享记忆(Hindsight)与知识库(LightRAG)经
     # settings.mcpServers 接入,届时在此追加
+    mcpServers = {
+
+    };
   };
 
   # 普通用户接入共享状态:目录 2770/config.yaml 0660 均为 hermes 组权限,
